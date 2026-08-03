@@ -15,7 +15,7 @@ dependencies = [
     # is deliberately NOT declared - an undeclared import is a bug, and a
     # declared non-import is a lie about what this package needs.
     "requests>=2.32.3",
-    "prometheus-client>=0.20.0",
+    "prometheus-client>=0.26.0",
     # media.py: HKDF + AES-CBC to decrypt WhatsApp CDN blobs directly. Already
     # present transitively via fastmcp, but declared because we import it
     # directly - a transitive pull is not a contract.
