@@ -1,0 +1,112 @@
+#!/usr/bin/env bash
+# safebuild - run a docker compose build under a REAL resource cap, after
+# verifying the host has enough headroom. Installed at /usr/local/bin/safebuild.
+#
+# Usage:
+#   safebuild <service>            # e.g. safebuild mcp
+#   safebuild -f <service>         # force, skip preflight (still capped)
+#
+# Thresholds are tunable via env, e.g. MIN_AVAIL_MB=1500 safebuild mcp.
+#
+# WHY THIS WAS REWRITTEN (2026-07-16)
+# The original wrapped `docker compose build` in a transient systemd unit with
+# -p MemoryMax=1500M. That cap never bound anything. BuildKit does not build in
+# the caller's cgroup - it builds inside dockerd, which lives in
+# /system.slice/docker.service with MemoryMax=infinity. So the only thing being
+# capped was the `docker compose` CLI client, a few MB of Python. Every build
+# this box has ever run was effectively unbounded, which is precisely the
+# failure the tool was written to prevent after the 2026-06-24 outage.
+#
+# This version runs builds on a `docker-container` buildx builder. Its buildkitd
+# IS a container, so --driver-opt memory becomes a real cgroup memory.max on the
+# process that actually does the work. Verified: memory.max = 1572864000.
+#
+# Bonus: no sudo. The old version needed `sudo systemd-run`, which meant it
+# could not run unattended - and granting NOPASSWD on systemd-run would have
+# been equivalent to granting full root, since `systemd-run /bin/sh` is a root
+# shell.
+#
+# Trade-off: the docker-container driver keeps its own build cache, separate
+# from the default driver's. The first build after switching is cold.
+set -euo pipefail
+
+MIN_AVAIL_MB="${MIN_AVAIL_MB:-1000}"   # require this much available RAM
+MIN_DISK_GB="${MIN_DISK_GB:-5}"        # require this much free disk on /
+MAX_LOAD_1M="${MAX_LOAD_1M:-1.5}"      # 1-minute load average ceiling
+MEM_CAP_MB="${MEM_CAP_MB:-1500}"       # hard cap for the buildkit container
+CPU_QUOTA="${CPU_QUOTA:-180000}"       # 180% of one core, matching the old unit
+BUILDER="${BUILDER:-capped}"
+COMPOSE_DIR="${COMPOSE_DIR:-/opt/whatsapp-mcp}"
+
+force=0
+if [[ "${1:-}" == "-f" ]]; then
+  force=1
+  shift
+fi
+
+svc="${1:-}"
+if [[ -z "$svc" ]]; then
+  echo "usage: $0 [-f] <compose-service>" >&2
+  exit 64
+fi
+
+COMPOSE_FILE="${COMPOSE_DIR}/docker-compose.yml"
+[[ -f "$COMPOSE_FILE" ]] || { echo "missing $COMPOSE_FILE" >&2; exit 1; }
+cd "$COMPOSE_DIR"
+
+# --- preflight --------------------------------------------------------------
+avail=$(free -m | awk '/^Mem:/{print $7}')
+disk=$(df --output=avail -BG / | awk 'NR==2{sub("G","",$1); print $1}')
+load=$(awk '{print $1}' /proc/loadavg)
+
+printf "preflight: avail=%sMB (min %s)  disk=%sG (min %s)  load=%s (max %s)\n" \
+  "$avail" "$MIN_AVAIL_MB" "$disk" "$MIN_DISK_GB" "$load" "$MAX_LOAD_1M"
+
+if [[ $force -eq 0 ]]; then
+  fail=0
+  [[ "$avail" -lt "$MIN_AVAIL_MB" ]] && { echo "  FAIL: low memory"; fail=1; }
+  [[ "$disk"  -lt "$MIN_DISK_GB"  ]] && { echo "  FAIL: low disk";   fail=1; }
+  awk -v l="$load" -v m="$MAX_LOAD_1M" 'BEGIN{ exit !(l>m) }' && {
+    echo "  FAIL: load too high"; fail=1; }
+  [[ $fail -eq 1 ]] && { echo "aborting (use -f to override)"; exit 1; }
+fi
+
+# --- capped builder ---------------------------------------------------------
+want_bytes=$(( MEM_CAP_MB * 1024 * 1024 ))
+node="buildx_buildkit_${BUILDER}0"
+
+ensure_builder() {
+  if docker buildx inspect "$BUILDER" >/dev/null 2>&1; then
+    # Builder exists - confirm its cap still matches MEM_CAP_MB. A stale builder
+    # carrying the wrong limit is worse than none, because it looks capped.
+    local cur
+    cur=$(docker inspect "$node" --format '{{.HostConfig.Memory}}' 2>/dev/null || echo 0)
+    if [[ "$cur" == "$want_bytes" ]]; then
+      return 0
+    fi
+    echo "  builder '$BUILDER' cap is ${cur:-0}B, want ${want_bytes}B - recreating"
+    docker buildx rm "$BUILDER" >/dev/null 2>&1 || true
+  fi
+  echo "  creating capped builder '$BUILDER' (memory <= ${MEM_CAP_MB}M)"
+  docker buildx create --name "$BUILDER" --driver docker-container \
+    --driver-opt memory="${MEM_CAP_MB}m" \
+    --driver-opt memory-swap="${MEM_CAP_MB}m" \
+    --driver-opt cpu-quota="${CPU_QUOTA}" \
+    --driver-opt default-load=true \
+    --bootstrap >/dev/null
+}
+
+ensure_builder
+
+# Prove the cap is real before relying on it. If buildkitd is somehow running
+# uncapped we want to fail loudly rather than silently rebuild the 2026-06-24
+# conditions.
+actual=$(docker exec "$node" cat /sys/fs/cgroup/memory.max 2>/dev/null || echo "")
+if [[ "$actual" != "$want_bytes" ]]; then
+  echo "  FAIL: builder cgroup memory.max is '${actual:-unset}', expected ${want_bytes}" >&2
+  echo "  refusing to build uncapped" >&2
+  exit 1
+fi
+
+echo "starting capped build of '$svc' (buildkit memory.max = ${MEM_CAP_MB}M, real cgroup limit)..."
+exec env BUILDX_BUILDER="$BUILDER" docker compose -f "$COMPOSE_FILE" build "$svc"

@@ -1,0 +1,31 @@
+# Secrets - never commit
+.env
+*.env
+# Timestamped backups (.env.bak-<timestamp>) match neither `.env` nor `*.env`,
+# so without these two lines they are committable - and they hold the live
+# bearer token.
+.env.*
+*.env.bak*
+!.env.example
+
+# Build artifacts
+whatsapp-bridge/whatsapp-bridge-bin
+whatsapp-bridge/store/
+**/__pycache__/
+*.pyc
+.venv/
+whatsapp-mcp-server/.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Local-only operational state baseline
+_baseline/
+
+# Voice-transcription harness: real voices + private transcripts stay local
+tests/voice-harness/audio/
+tests/voice-harness/results/
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3

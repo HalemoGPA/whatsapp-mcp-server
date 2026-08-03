@@ -1,0 +1,90 @@
+{
+ "0": {
+  "gold": "get_contact_chats",
+  "alts": []
+ },
+ "1": {
+  "gold": "update_group_participants",
+  "alts": []
+ },
+ "2": {
+  "gold": "leave_group",
+  "alts": []
+ },
+ "3": {
+  "gold": "mute_chat",
+  "alts": []
+ },
+ "4": {
+  "gold": "block_user",
+  "alts": []
+ },
+ "5": {
+  "gold": "list_drafts",
+  "alts": []
+ },
+ "6": {
+  "gold": "list_scheduled",
+  "alts": []
+ },
+ "7": {
+  "gold": "archive_chat",
+  "alts": []
+ },
+ "8": {
+  "gold": "get_top_active_chats",
+  "alts": []
+ },
+ "9": {
+  "gold": "count_messages",
+  "alts": []
+ },
+ "10": {
+  "gold": "export_chat",
+  "alts": []
+ },
+ "11": {
+  "gold": "get_profile_picture",
+  "alts": []
+ },
+ "12": {
+  "gold": "get_bridge_stats",
+  "alts": []
+ },
+ "13": {
+  "gold": "get_replies_to",
+  "alts": []
+ },
+ "14": {
+  "gold": "get_last_interaction",
+  "alts": []
+ },
+ "15": {
+  "gold": "get_group_info",
+  "alts": []
+ },
+ "16": {
+  "gold": "mute_chat",
+  "alts": []
+ },
+ "17": {
+  "gold": "schedule_message",
+  "alts": []
+ },
+ "18": {
+  "gold": "star_message",
+  "alts": []
+ },
+ "19": {
+  "gold": "sender_activity",
+  "alts": []
+ },
+ "20": {
+  "gold": "get_profile_picture",
+  "alts": []
+ },
+ "21": {
+  "gold": "set_message_label",
+  "alts": []
+ }
+}

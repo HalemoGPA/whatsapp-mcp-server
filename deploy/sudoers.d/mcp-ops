@@ -1,0 +1,98 @@
+# Passwordless commands for automated deploy sessions run by the `mcpops` user.
+# Installed at /etc/sudoers.d/mcp-ops
+#
+# Scope: everything Claude actually needs to unblock day-to-day ops work
+# on this box. Deliberately NOT passwordless:
+#   - systemctl restart nginx   (project rule: reload only)
+#   - systemctl restart docker  (would kill other unrelated stacks)
+#   - apt install / apt remove  (too broad; ask on demand)
+#   - visudo, su, sudoedit      (privilege escalation)
+#
+# Roll back:  sudo rm /etc/sudoers.d/mcp-ops
+# Validate:   sudo visudo -c
+#
+# NOTE: each rule uses (root) so it can only run as root, matching the
+# principle-of-least-authority pattern the other service rules on the box use.
+#
+# KNOWN RESIDUAL (documented, not hidden): the `tee /etc/nginx/.../*` rules use
+# a sudo path wildcard, and sudo's `*` matches `/` and `..`, so in principle
+# `tee /etc/nginx/sites-available/../../sudoers.d/x` could write outside the
+# nginx tree. It is kept because writing a vhost by name genuinely needs a
+# wildcard and this box is single-tenant with an already-trusted mcpops account
+# that can reload nginx anyway. If this file is reused on a multi-tenant host,
+# replace the tee wildcards with one exact rule per managed vhost.
+
+# --- nginx config lifecycle ---
+mcpops ALL=(root) NOPASSWD: /usr/sbin/nginx -t
+mcpops ALL=(root) NOPASSWD: /usr/sbin/nginx -T
+mcpops ALL=(root) NOPASSWD: /usr/bin/systemctl reload nginx
+mcpops ALL=(root) NOPASSWD: /usr/bin/systemctl reload nginx.service
+mcpops ALL=(root) NOPASSWD: /bin/systemctl reload nginx
+mcpops ALL=(root) NOPASSWD: /bin/systemctl reload nginx.service
+mcpops ALL=(root) NOPASSWD: /usr/bin/tee /etc/nginx/sites-available/*
+mcpops ALL=(root) NOPASSWD: /usr/bin/tee /etc/nginx/sites-enabled/*
+mcpops ALL=(root) NOPASSWD: /usr/bin/tee /etc/nginx/conf.d/*
+mcpops ALL=(root) NOPASSWD: /usr/bin/ln -sf /etc/nginx/sites-available/* /etc/nginx/sites-enabled/*
+
+# --- read-only service inspection (safe: no state change) ---
+# `--no-pager` is required on every form: `systemctl status` invokes a pager by
+# default, and a pager running as root can be made to spawn a root shell. The
+# flag comes first so the wildcard cannot smuggle a pager back in.
+mcpops ALL=(root) NOPASSWD: /usr/bin/systemctl --no-pager status *
+mcpops ALL=(root) NOPASSWD: /usr/bin/systemctl is-active *
+mcpops ALL=(root) NOPASSWD: /usr/bin/systemctl is-enabled *
+mcpops ALL=(root) NOPASSWD: /usr/bin/systemctl --no-pager list-units *
+mcpops ALL=(root) NOPASSWD: /bin/systemctl --no-pager status *
+mcpops ALL=(root) NOPASSWD: /bin/systemctl is-active *
+mcpops ALL=(root) NOPASSWD: /bin/systemctl is-enabled *
+
+# --- journalctl (read-only logs) ---
+# Same reason: journalctl pages by default, so --no-pager is mandatory on the
+# forms that dump content.
+mcpops ALL=(root) NOPASSWD: /usr/bin/journalctl --no-pager
+mcpops ALL=(root) NOPASSWD: /usr/bin/journalctl --no-pager -u *
+mcpops ALL=(root) NOPASSWD: /usr/bin/journalctl --no-pager -u * -n *
+mcpops ALL=(root) NOPASSWD: /usr/bin/journalctl --no-pager -u * --since *
+mcpops ALL=(root) NOPASSWD: /usr/bin/journalctl -u * -f
+mcpops ALL=(root) NOPASSWD: /usr/bin/journalctl --no-pager --since *
+
+# --- reloads for services where "restart" would break something and
+#     "reload" is genuinely the right verb ---
+mcpops ALL=(root) NOPASSWD: /usr/bin/systemctl reload sshd
+mcpops ALL=(root) NOPASSWD: /usr/bin/systemctl reload ssh
+mcpops ALL=(root) NOPASSWD: /usr/bin/systemctl reload earlyoom
+mcpops ALL=(root) NOPASSWD: /usr/bin/systemctl restart earlyoom
+mcpops ALL=(root) NOPASSWD: /bin/systemctl reload earlyoom
+mcpops ALL=(root) NOPASSWD: /bin/systemctl restart earlyoom
+
+# --- TLS renewal (safe: only renews if within window) ---
+# Exact forms only, NO trailing wildcard. `certbot renew *` would permit
+# `certbot renew --pre-hook '<cmd>'` / `--deploy-hook '<cmd>'`, which runs an
+# arbitrary command as root - a passwordless-sudo hole. If a hook is ever
+# needed, add that exact hook command as its own rule.
+mcpops ALL=(root) NOPASSWD: /usr/bin/certbot renew
+mcpops ALL=(root) NOPASSWD: /usr/bin/certbot renew --dry-run
+mcpops ALL=(root) NOPASSWD: /usr/bin/certbot certificates
+
+# --- system reads (dmesg, listening ports, /var/log tails) ---
+mcpops ALL=(root) NOPASSWD: /usr/bin/dmesg
+mcpops ALL=(root) NOPASSWD: /usr/bin/dmesg -T
+mcpops ALL=(root) NOPASSWD: /usr/bin/ss -tulnp
+mcpops ALL=(root) NOPASSWD: /usr/sbin/ss -tulnp
+# tail/cat only. `less`/`more`/any pager is intentionally excluded: a pager on
+# a root-run file can spawn a root shell (`!sh`, `v`), which would defeat the
+# whole point of enumerating individual read commands.
+mcpops ALL=(root) NOPASSWD: /usr/bin/tail /var/log/*
+mcpops ALL=(root) NOPASSWD: /usr/bin/tail -n * /var/log/*
+mcpops ALL=(root) NOPASSWD: /usr/bin/tail -f /var/log/*
+mcpops ALL=(root) NOPASSWD: /usr/bin/cat /var/log/*
+
+# --- docker: prune only (safe: removes dangling/stale, keeps running) ---
+mcpops ALL=(root) NOPASSWD: /usr/bin/docker system prune -f
+mcpops ALL=(root) NOPASSWD: /usr/bin/docker image prune -f
+mcpops ALL=(root) NOPASSWD: /usr/bin/docker builder prune -f
+
+# --- ufw / firewall reads (state check only) ---
+mcpops ALL=(root) NOPASSWD: /usr/sbin/ufw status
+mcpops ALL=(root) NOPASSWD: /usr/sbin/ufw status verbose
+mcpops ALL=(root) NOPASSWD: /usr/sbin/ufw status numbered

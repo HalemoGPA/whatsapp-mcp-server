@@ -1,0 +1,1246 @@
+{
+ "probes": [
+  {
+   "q": "which threads is Nour actually part of",
+   "gold": "get_contact_chats",
+   "alts": [],
+   "find_tool_top8": [
+    {
+     "name": "get_message_thread",
+     "description": "Return {original, replies, reply_count} for a message thread."
+    },
+    {
+     "name": "list_media_in_chat",
+     "description": "Enumerate media messages in a chat (without downloading them).\n\nUseful for \"what voice notes did X send last week\" workflows -\nreturns IDs/timestamps/sizes only. Pair with save_media (to get a file) or\nview_media (to look at one) to\nactually fetch a specific one."
+    },
+    {
+     "name": "delete_chat",
+     "description": "Delete a chat both remotely (WhatsApp app state) and locally."
+    },
+    {
+     "name": "groups_with_member",
+     "description": "Which groups contain this contact (based on observed activity)."
+    },
+    {
+     "name": "view_media",
+     "description": "Fetch WhatsApp media inline so YOU (the model) can see/hear it and\nanswer about its CONTENTS (\"what's in this photo?\", \"which verse is\nthis?\", \"what does this voice note say?\"). Does NOT save a file - use\nsave_media to download. Works on deleted messages and offline senders\n(pulls from CDN). Oversized media returns a link instead. Use\nlist_media_in_chat to enumerate media first."
+    },
+    {
+     "name": "backfill_group_participants",
+     "description": "One-shot: populate group_participants from existing message history.\n\nRuns a single INSERT-SELECT that groups messages by (chat_jid, sender).\nIdempotent - repeat calls only touch new (group, jid) pairs. Can take\n30-60 seconds on stores with 100k+ messages."
+    },
+    {
+     "name": "update_group_participants",
+     "description": "Add, remove, promote, or demote group members. Caller must be an admin."
+    }
+   ]
+  },
+  {
+   "q": "kick Tariq out of the project group",
+   "gold": "update_group_participants",
+   "alts": [],
+   "find_tool_top8": [
+    {
+     "name": "backfill_group_participants",
+     "description": "One-shot: populate group_participants from existing message history.\n\nRuns a single INSERT-SELECT that groups messages by (chat_jid, sender).\nIdempotent - repeat calls only touch new (group, jid) pairs. Can take\n30-60 seconds on stores with 100k+ messages."
+    },
+    {
+     "name": "create_group",
+     "description": "Create a new WhatsApp group with the caller as admin."
+    },
+    {
+     "name": "get_group_info",
+     "description": "Get full metadata for a group: name, topic, participants, admin status."
+    },
+    {
+     "name": "get_group_invite_link",
+     "description": "Get (or reset) a group's chat.whatsapp.com invite link."
+    },
+    {
+     "name": "groups_with_member",
+     "description": "Which groups contain this contact (based on observed activity)."
+    },
+    {
+     "name": "join_group_by_link",
+     "description": "Preview or join a WhatsApp group via invite link."
+    },
+    {
+     "name": "leave_group",
+     "description": "Exit a WhatsApp group. Irreversible without re-invite."
+    },
+    {
+     "name": "list_group_members",
+     "description": "Members of a group (based on observed activity in messages)."
+    }
+   ]
+  },
+  {
+   "q": "I want to exit the neighborhood chat for good",
+   "gold": "leave_group",
+   "alts": [],
+   "find_tool_top8": [
+    {
+     "name": "list_media_in_chat",
+     "description": "Enumerate media messages in a chat (without downloading them).\n\nUseful for \"what voice notes did X send last week\" workflows -\nreturns IDs/timestamps/sizes only. Pair with save_media (to get a file) or\nview_media (to look at one) to\nactually fetch a specific one."
+    },
+    {
+     "name": "archive_chat",
+     "description": "Archive (or unarchive) a chat."
+    },
+    {
+     "name": "delete_chat",
+     "description": "Delete a chat both remotely (WhatsApp app state) and locally."
+    },
+    {
+     "name": "export_chat",
+     "description": "LLM-friendly chat export."
+    },
+    {
+     "name": "get_chat",
+     "description": "Get WhatsApp chat metadata by JID."
+    },
+    {
+     "name": "get_chat_note",
+     "description": "Read the private note attached to a chat."
+    },
+    {
+     "name": "get_chat_stats",
+     "description": "Summarise a chat: total messages, from_me count, distinct senders,\nfirst/last message timestamps, top-5 senders, and media type breakdown."
+    },
+    {
+     "name": "get_contact_chats",
+     "description": "Get all WhatsApp chats involving the contact."
+    }
+   ]
+  },
+  {
+   "q": "silence notifications from the school group",
+   "gold": "mute_chat",
+   "alts": [],
+   "find_tool_top8": [
+    {
+     "name": "backfill_group_participants",
+     "description": "One-shot: populate group_participants from existing message history.\n\nRuns a single INSERT-SELECT that groups messages by (chat_jid, sender).\nIdempotent - repeat calls only touch new (group, jid) pairs. Can take\n30-60 seconds on stores with 100k+ messages."
+    },
+    {
+     "name": "create_group",
+     "description": "Create a new WhatsApp group with the caller as admin."
+    },
+    {
+     "name": "get_group_info",
+     "description": "Get full metadata for a group: name, topic, participants, admin status."
+    },
+    {
+     "name": "get_group_invite_link",
+     "description": "Get (or reset) a group's chat.whatsapp.com invite link."
+    },
+    {
+     "name": "groups_with_member",
+     "description": "Which groups contain this contact (based on observed activity)."
+    },
+    {
+     "name": "join_group_by_link",
+     "description": "Preview or join a WhatsApp group via invite link."
+    },
+    {
+     "name": "leave_group",
+     "description": "Exit a WhatsApp group. Irreversible without re-invite."
+    },
+    {
+     "name": "list_group_members",
+     "description": "Members of a group (based on observed activity in messages)."
+    }
+   ]
+  },
+  {
+   "q": "stop this number from messaging me ever again",
+   "gold": "block_user",
+   "alts": [],
+   "find_tool_top8": [
+    {
+     "name": "count_messages",
+     "description": "Cheap COUNT(*) with optional filters. Pass media_type=\"\" for\ntext-only, media_type=\"image\" for images, etc."
+    },
+    {
+     "name": "list_messages",
+     "description": "Get WhatsApp messages matching specified criteria with optional context."
+    },
+    {
+     "name": "messages_by_day",
+     "description": "Daily message-count histogram for a chat over the last N days."
+    },
+    {
+     "name": "search_all_messages",
+     "description": "Search message content across ALL chats via FTS5.\n\nReturns up to `limit` matches with a snippet() preview (terms wrapped\nin <mark>...</mark>). Way more useful than list_messages with query\nbecause it doesn't require knowing the chat_jid up front."
+    },
+    {
+     "name": "list_view_once",
+     "description": "List view-once (\"open once\") messages that WE SENT.\n\nIMPORTANT - this only ever lists OUTGOING view-once media, and that is\na hard limit, not a gap to work around. Since Meta's server-side fix of\n~Nov 2024, view-once media sent TO this account is never delivered to a\nlinked device at all: the server strips the encrypted payload and sends\nonly an `unavailable` placeholder. whatsmeow then asks the primary\nphone to resend and the phone declines. There is no ciphertext to\ndecrypt and no code change that obtains one. Only the phone itself ever\nholds incoming view-once media.\n\nSo: if the user asks to save a view-once photo SOMEONE SENT THEM, the\nhonest answer is that it is not possible through this bridge - do not\nimply otherwise or go hunting for the message id. It was never stored.\n\nFor our own sends, save_media / view_media work normally, including\nafter the recipient has burned their view.\n\nOnly sends made after 2026-07-16 are flagged; earlier ones are\nindistinguishable from ordinary media (the envelope is unwrapped before\nstorage, so there is nothing to back-fill from)."
+    },
+    {
+     "name": "mention_everyone",
+     "description": "Send a message to a group that @-mentions every participant."
+    },
+    {
+     "name": "edit_message",
+     "description": "Edit one of YOUR sent WhatsApp messages within the 24-hour edit window."
+    },
+    {
+     "name": "forward_message",
+     "description": "Forward an existing message from one chat to another (person or group).\n\nPreserves media when the original message has raw protobuf stored\n(messages received AFTER batch alpha only); older text messages are\nforwarded as text. The forwarded pill is shown to the recipient."
+    }
+   ]
+  },
+  {
+   "q": "show me my stashed message templates",
+   "gold": "list_drafts",
+   "alts": [],
+   "find_tool_top8": [
+    {
+     "name": "delete_message",
+     "description": "Delete a WhatsApp message for everyone (revoke). Revoke window is 1h08m."
+    },
+    {
+     "name": "edit_message",
+     "description": "Edit one of YOUR sent WhatsApp messages within the 24-hour edit window."
+    },
+    {
+     "name": "forward_message",
+     "description": "Forward an existing message from one chat to another (person or group).\n\nPreserves media when the original message has raw protobuf stored\n(messages received AFTER batch alpha only); older text messages are\nforwarded as text. The forwarded pill is shown to the recipient."
+    },
+    {
+     "name": "get_message_context",
+     "description": "Get context around a specific WhatsApp message."
+    },
+    {
+     "name": "get_message_receipts",
+     "description": "Get delivery / read / played receipts for a message you sent.\n\nReturns ISO-8601 timestamps for whichever of delivered_at, read_at,\nand played_at have been received from the recipient. Missing keys\nmean that receipt type hasn't arrived (recipient offline, hasn't\nopened the chat, or hasn't tapped play on a voice note)."
+    },
+    {
+     "name": "get_message_thread",
+     "description": "Return {original, replies, reply_count} for a message thread."
+    },
+    {
+     "name": "react_to_message",
+     "description": "React to a WhatsApp message with an emoji (empty string clears the reaction)."
+    },
+    {
+     "name": "schedule_message",
+     "description": "Queue a message to send at a future time."
+    }
+   ]
+  },
+  {
+   "q": "what messages have I got lined up to send later",
+   "gold": "list_scheduled",
+   "alts": [],
+   "find_tool_top8": [
+    {
+     "name": "search_all_messages",
+     "description": "Search message content across ALL chats via FTS5.\n\nReturns up to `limit` matches with a snippet() preview (terms wrapped\nin <mark>...</mark>). Way more useful than list_messages with query\nbecause it doesn't require knowing the chat_jid up front."
+    },
+    {
+     "name": "send_audio_message",
+     "description": "Send an audio file as a WhatsApp voice message.\n\nSame input flexibility as send_file (path / url / base64). Non-.ogg\ninputs are converted to opus by the MCP container's bundled ffmpeg."
+    },
+    {
+     "name": "send_message",
+     "description": "Send a WhatsApp message to a person or group. For group chats use the JID."
+    },
+    {
+     "name": "schedule_message",
+     "description": "Queue a message to send at a future time."
+    },
+    {
+     "name": "send_contact_card",
+     "description": "Share one or more contact cards via vCard 3.0."
+    },
+    {
+     "name": "send_draft",
+     "description": "Send a saved draft immediately."
+    },
+    {
+     "name": "send_file",
+     "description": "Send a file (image, video, raw audio, document) via WhatsApp."
+    },
+    {
+     "name": "send_location",
+     "description": "Share a static map pin with a contact or group."
+    }
+   ]
+  },
+  {
+   "q": "put this conversation away, I don't want to see it",
+   "gold": "archive_chat",
+   "alts": [],
+   "find_tool_top8": [
+    {
+     "name": "save_media",
+     "description": "Get a download link that saves WhatsApp media to the user's Downloads\nfolder - the DEFAULT for any download/save/keep/\"send me\" request, and the\nONLY tool that puts a file on their machine (view_media just renders\ninline). Works on DELETED messages and offline senders, pulling from\nWhatsApp's CDN. Returns download_url (saves), preview_url (opens in the\nbrowser), and signed_url. The link is a credential; keep the TTL short."
+    },
+    {
+     "name": "set_status_message",
+     "description": "Update your WhatsApp 'About' text (the short bio shown in your profile)."
+    },
+    {
+     "name": "block_user",
+     "description": "Block a WhatsApp contact (they will not see you online and cannot message you)."
+    },
+    {
+     "name": "delete_chat",
+     "description": "Delete a chat both remotely (WhatsApp app state) and locally."
+    },
+    {
+     "name": "export_chat",
+     "description": "LLM-friendly chat export."
+    },
+    {
+     "name": "get_contact_chats",
+     "description": "Get all WhatsApp chats involving the contact."
+    },
+    {
+     "name": "get_message_thread",
+     "description": "Return {original, replies, reply_count} for a message thread."
+    },
+    {
+     "name": "get_privacy_settings",
+     "description": "Fetch your WhatsApp privacy settings (last_seen, status, profile, read receipts, group_add, online, call_add)."
+    }
+   ]
+  },
+  {
+   "q": "which chats have been blowing up today",
+   "gold": "get_top_active_chats",
+   "alts": [],
+   "find_tool_top8": [
+    {
+     "name": "groups_with_member",
+     "description": "Which groups contain this contact (based on observed activity)."
+    },
+    {
+     "name": "backfill_group_participants",
+     "description": "One-shot: populate group_participants from existing message history.\n\nRuns a single INSERT-SELECT that groups messages by (chat_jid, sender).\nIdempotent - repeat calls only touch new (group, jid) pairs. Can take\n30-60 seconds on stores with 100k+ messages."
+    },
+    {
+     "name": "create_group",
+     "description": "Create a new WhatsApp group with the caller as admin."
+    },
+    {
+     "name": "get_group_invite_link",
+     "description": "Get (or reset) a group's chat.whatsapp.com invite link."
+    },
+    {
+     "name": "archive_chat",
+     "description": "Archive (or unarchive) a chat."
+    },
+    {
+     "name": "delete_chat",
+     "description": "Delete a chat both remotely (WhatsApp app state) and locally."
+    },
+    {
+     "name": "export_chat",
+     "description": "LLM-friendly chat export."
+    },
+    {
+     "name": "get_chat",
+     "description": "Get WhatsApp chat metadata by JID."
+    }
+   ]
+  },
+  {
+   "q": "give me a headcount of texts in the work group",
+   "gold": "count_messages",
+   "alts": [],
+   "find_tool_top8": [
+    {
+     "name": "backfill_group_participants",
+     "description": "One-shot: populate group_participants from existing message history.\n\nRuns a single INSERT-SELECT that groups messages by (chat_jid, sender).\nIdempotent - repeat calls only touch new (group, jid) pairs. Can take\n30-60 seconds on stores with 100k+ messages."
+    },
+    {
+     "name": "create_group",
+     "description": "Create a new WhatsApp group with the caller as admin."
+    },
+    {
+     "name": "get_group_info",
+     "description": "Get full metadata for a group: name, topic, participants, admin status."
+    },
+    {
+     "name": "get_group_invite_link",
+     "description": "Get (or reset) a group's chat.whatsapp.com invite link."
+    },
+    {
+     "name": "groups_with_member",
+     "description": "Which groups contain this contact (based on observed activity)."
+    },
+    {
+     "name": "join_group_by_link",
+     "description": "Preview or join a WhatsApp group via invite link."
+    },
+    {
+     "name": "leave_group",
+     "description": "Exit a WhatsApp group. Irreversible without re-invite."
+    },
+    {
+     "name": "list_group_members",
+     "description": "Members of a group (based on observed activity in messages)."
+    }
+   ]
+  },
+  {
+   "q": "dump the whole conversation with my boss so I can read it back",
+   "gold": "export_chat",
+   "alts": [],
+   "find_tool_top8": [
+    {
+     "name": "mark_read",
+     "description": "Send read receipts (double blue tick) for one or more messages."
+    },
+    {
+     "name": "transcribe_voice",
+     "description": "Transcribe a voice note / audio message to text.\n\nVoice notes are also transcribed automatically in the background (from\n2026-07-15 onward) and stored, so usually you can just read the text\nvia get_message_context or search it with search_voice_notes. Use this\ntool to force a transcript now, or to (re)transcribe one on demand.\n\nEgyptian Arabic and Arabic/English code-switching are handled well\n(Speechmatics). English words come back written in Arabic script."
+    },
+    {
+     "name": "backfill_group_participants",
+     "description": "One-shot: populate group_participants from existing message history.\n\nRuns a single INSERT-SELECT that groups messages by (chat_jid, sender).\nIdempotent - repeat calls only touch new (group, jid) pairs. Can take\n30-60 seconds on stores with 100k+ messages."
+    },
+    {
+     "name": "get_message_thread",
+     "description": "Return {original, replies, reply_count} for a message thread."
+    },
+    {
+     "name": "mark_chat_unread",
+     "description": "Mark a chat as unread (blue dot) or read."
+    },
+    {
+     "name": "create_poll",
+     "description": "Send a poll to a chat; returns message_id. Read the tally with\nget_poll_results, cast votes with vote_in_poll. selectable_options_count\ncaps how many options each person may pick, but it is enforced only by\nthe recipient's WhatsApp app, not the server - vote_in_poll ignores it,\nso you can cap everyone else while voting past the cap yourself."
+    },
+    {
+     "name": "get_privacy_settings",
+     "description": "Fetch your WhatsApp privacy settings (last_seen, status, profile, read receipts, group_add, online, call_add)."
+    },
+    {
+     "name": "cancel_scheduled",
+     "description": "Cancel a pending scheduled message (irreversible)."
+    }
+   ]
+  },
+  {
+   "q": "what's the group's display photo",
+   "gold": "get_profile_picture",
+   "alts": [],
+   "find_tool_top8": [
+    {
+     "name": "backfill_group_participants",
+     "description": "One-shot: populate group_participants from existing message history.\n\nRuns a single INSERT-SELECT that groups messages by (chat_jid, sender).\nIdempotent - repeat calls only touch new (group, jid) pairs. Can take\n30-60 seconds on stores with 100k+ messages."
+    },
+    {
+     "name": "create_group",
+     "description": "Create a new WhatsApp group with the caller as admin."
+    },
+    {
+     "name": "get_group_info",
+     "description": "Get full metadata for a group: name, topic, participants, admin status."
+    },
+    {
+     "name": "get_group_invite_link",
+     "description": "Get (or reset) a group's chat.whatsapp.com invite link."
+    },
+    {
+     "name": "groups_with_member",
+     "description": "Which groups contain this contact (based on observed activity)."
+    },
+    {
+     "name": "join_group_by_link",
+     "description": "Preview or join a WhatsApp group via invite link."
+    },
+    {
+     "name": "leave_group",
+     "description": "Exit a WhatsApp group. Irreversible without re-invite."
+    },
+    {
+     "name": "list_group_members",
+     "description": "Members of a group (based on observed activity in messages)."
+    }
+   ]
+  },
+  {
+   "q": "give me the operational numbers, how many chats and media stored",
+   "gold": "get_bridge_stats",
+   "alts": [],
+   "find_tool_top8": [
+    {
+     "name": "list_media_in_chat",
+     "description": "Enumerate media messages in a chat (without downloading them).\n\nUseful for \"what voice notes did X send last week\" workflows -\nreturns IDs/timestamps/sizes only. Pair with save_media (to get a file) or\nview_media (to look at one) to\nactually fetch a specific one."
+    },
+    {
+     "name": "get_media_info",
+     "description": "Return media metadata (mime, size, filename, media_type) for a\nmessage WITHOUT downloading the payload. Cheap alternative to\nsave_media / view_media for deciding whether/how to fetch."
+    },
+    {
+     "name": "count_messages",
+     "description": "Cheap COUNT(*) with optional filters. Pass media_type=\"\" for\ntext-only, media_type=\"image\" for images, etc."
+    },
+    {
+     "name": "list_all_media_by_type",
+     "description": "Cross-chat media search by type (\"image\" / \"video\" / \"audio\" /\n\"document\"). Newest first; pass `before` (ISO) for cursor pagination."
+    },
+    {
+     "name": "view_media",
+     "description": "Fetch WhatsApp media inline so YOU (the model) can see/hear it and\nanswer about its CONTENTS (\"what's in this photo?\", \"which verse is\nthis?\", \"what does this voice note say?\"). Does NOT save a file - use\nsave_media to download. Works on deleted messages and offline senders\n(pulls from CDN). Oversized media returns a link instead. Use\nlist_media_in_chat to enumerate media first."
+    },
+    {
+     "name": "save_media",
+     "description": "Get a download link that saves WhatsApp media to the user's Downloads\nfolder - the DEFAULT for any download/save/keep/\"send me\" request, and the\nONLY tool that puts a file on their machine (view_media just renders\ninline). Works on DELETED messages and offline senders, pulling from\nWhatsApp's CDN. Returns download_url (saves), preview_url (opens in the\nbrowser), and signed_url. The link is a credential; keep the TTL short."
+    },
+    {
+     "name": "send_view_once_media",
+     "description": "Send an image or video as a 'view once' WhatsApp message.\n\nRecipient's official WhatsApp app shows the media exactly once then\nhides it. Other clients (including this bridge's media tools) can\nstill fetch raw bytes - treat as a UX hint, not security.\n\nSpecify EXACTLY ONE of media_path / media_url / media_data. For files\non your LLM client's machine, base64-encode and pass via media_data\nwith filename set (e.g. filename=\"aot.jpg\")."
+    },
+    {
+     "name": "get_direct_chat_by_contact",
+     "description": "Get WhatsApp chat metadata by sender phone number."
+    }
+   ]
+  },
+  {
+   "q": "who replied to my announcement message",
+   "gold": "get_replies_to",
+   "alts": [],
+   "find_tool_top8": [
+    {
+     "name": "get_message_receipts",
+     "description": "Get delivery / read / played receipts for a message you sent.\n\nReturns ISO-8601 timestamps for whichever of delivered_at, read_at,\nand played_at have been received from the recipient. Missing keys\nmean that receipt type hasn't arrived (recipient offline, hasn't\nopened the chat, or hasn't tapped play on a voice note)."
+    },
+    {
+     "name": "delete_message",
+     "description": "Delete a WhatsApp message for everyone (revoke). Revoke window is 1h08m."
+    },
+    {
+     "name": "edit_message",
+     "description": "Edit one of YOUR sent WhatsApp messages within the 24-hour edit window."
+    },
+    {
+     "name": "forward_message",
+     "description": "Forward an existing message from one chat to another (person or group).\n\nPreserves media when the original message has raw protobuf stored\n(messages received AFTER batch alpha only); older text messages are\nforwarded as text. The forwarded pill is shown to the recipient."
+    },
+    {
+     "name": "get_message_context",
+     "description": "Get context around a specific WhatsApp message."
+    },
+    {
+     "name": "get_message_thread",
+     "description": "Return {original, replies, reply_count} for a message thread."
+    },
+    {
+     "name": "react_to_message",
+     "description": "React to a WhatsApp message with an emoji (empty string clears the reaction)."
+    },
+    {
+     "name": "schedule_message",
+     "description": "Queue a message to send at a future time."
+    }
+   ]
+  },
+  {
+   "q": "when did I last hear from my brother",
+   "gold": "get_last_interaction",
+   "alts": [],
+   "find_tool_top8": [
+    {
+     "name": "get_last_interaction",
+     "description": "Get most recent WhatsApp message involving the contact."
+    },
+    {
+     "name": "view_media",
+     "description": "Fetch WhatsApp media inline so YOU (the model) can see/hear it and\nanswer about its CONTENTS (\"what's in this photo?\", \"which verse is\nthis?\", \"what does this voice note say?\"). Does NOT save a file - use\nsave_media to download. Works on deleted messages and offline senders\n(pulls from CDN). Oversized media returns a link instead. Use\nlist_media_in_chat to enumerate media first."
+    },
+    {
+     "name": "forward_message",
+     "description": "Forward an existing message from one chat to another (person or group).\n\nPreserves media when the original message has raw protobuf stored\n(messages received AFTER batch alpha only); older text messages are\nforwarded as text. The forwarded pill is shown to the recipient."
+    },
+    {
+     "name": "get_reactions_on",
+     "description": "List all reactions on a specific message (who reacted, with what emoji, when)."
+    },
+    {
+     "name": "get_chat_stats",
+     "description": "Summarise a chat: total messages, from_me count, distinct senders,\nfirst/last message timestamps, top-5 senders, and media type breakdown."
+    },
+    {
+     "name": "get_privacy_settings",
+     "description": "Fetch your WhatsApp privacy settings (last_seen, status, profile, read receipts, group_add, online, call_add)."
+    },
+    {
+     "name": "get_quiet_chats",
+     "description": "Chats you haven't heard from in the last N days (default 30), oldest first."
+    },
+    {
+     "name": "get_top_active_chats",
+     "description": "Chats sorted by message count in the last N hours (default 24)."
+    }
+   ]
+  },
+  {
+   "q": "what's the topic and admin setup for this group",
+   "gold": "get_group_info",
+   "alts": [],
+   "find_tool_top8": [
+    {
+     "name": "get_group_info",
+     "description": "Get full metadata for a group: name, topic, participants, admin status."
+    },
+    {
+     "name": "create_group",
+     "description": "Create a new WhatsApp group with the caller as admin."
+    },
+    {
+     "name": "update_group_participants",
+     "description": "Add, remove, promote, or demote group members. Caller must be an admin."
+    },
+    {
+     "name": "backfill_group_participants",
+     "description": "One-shot: populate group_participants from existing message history.\n\nRuns a single INSERT-SELECT that groups messages by (chat_jid, sender).\nIdempotent - repeat calls only touch new (group, jid) pairs. Can take\n30-60 seconds on stores with 100k+ messages."
+    },
+    {
+     "name": "get_group_invite_link",
+     "description": "Get (or reset) a group's chat.whatsapp.com invite link."
+    },
+    {
+     "name": "groups_with_member",
+     "description": "Which groups contain this contact (based on observed activity)."
+    },
+    {
+     "name": "join_group_by_link",
+     "description": "Preview or join a WhatsApp group via invite link."
+    },
+    {
+     "name": "leave_group",
+     "description": "Exit a WhatsApp group. Irreversible without re-invite."
+    }
+   ]
+  },
+  {
+   "q": "stop this chat from buzzing me",
+   "gold": "mute_chat",
+   "alts": [],
+   "find_tool_top8": [
+    {
+     "name": "mute_chat",
+     "description": "Mute (or unmute) a chat's notifications."
+    },
+    {
+     "name": "archive_chat",
+     "description": "Archive (or unarchive) a chat."
+    },
+    {
+     "name": "delete_chat",
+     "description": "Delete a chat both remotely (WhatsApp app state) and locally."
+    },
+    {
+     "name": "export_chat",
+     "description": "LLM-friendly chat export."
+    },
+    {
+     "name": "get_chat",
+     "description": "Get WhatsApp chat metadata by JID."
+    },
+    {
+     "name": "get_chat_note",
+     "description": "Read the private note attached to a chat."
+    },
+    {
+     "name": "get_chat_stats",
+     "description": "Summarise a chat: total messages, from_me count, distinct senders,\nfirst/last message timestamps, top-5 senders, and media type breakdown."
+    },
+    {
+     "name": "get_contact_chats",
+     "description": "Get all WhatsApp chats involving the contact."
+    }
+   ]
+  },
+  {
+   "q": "remind them at 8am tomorrow by texting this",
+   "gold": "schedule_message",
+   "alts": [],
+   "find_tool_top8": [
+    {
+     "name": "schedule_message",
+     "description": "Queue a message to send at a future time."
+    },
+    {
+     "name": "get_message_context",
+     "description": "Get context around a specific WhatsApp message."
+    },
+    {
+     "name": "count_messages",
+     "description": "Cheap COUNT(*) with optional filters. Pass media_type=\"\" for\ntext-only, media_type=\"image\" for images, etc."
+    },
+    {
+     "name": "forward_message",
+     "description": "Forward an existing message from one chat to another (person or group).\n\nPreserves media when the original message has raw protobuf stored\n(messages received AFTER batch alpha only); older text messages are\nforwarded as text. The forwarded pill is shown to the recipient."
+    },
+    {
+     "name": "get_user_info_bulk",
+     "description": "Bulk UserInfo: status text, picture_id, device count, verified-business name."
+    },
+    {
+     "name": "post_status",
+     "description": "Post a text update to your WhatsApp status broadcast (visible to your contacts)."
+    },
+    {
+     "name": "search_voice_notes",
+     "description": "Search across transcribed voice notes by their spoken content.\n\nFull-text search over voice-note transcripts (Arabic-aware). Returns\nmatching messages with a snippet; pair the message_id with\nget_message_context to see it in its chat, or transcribe_voice for the\nfull text."
+    },
+    {
+     "name": "set_status_message",
+     "description": "Update your WhatsApp 'About' text (the short bio shown in your profile)."
+    }
+   ]
+  },
+  {
+   "q": "bookmark this text, it's important",
+   "gold": "star_message",
+   "alts": [],
+   "find_tool_top8": [
+    {
+     "name": "star_message",
+     "description": "Star (or unstar) a specific message."
+    },
+    {
+     "name": "get_message_context",
+     "description": "Get context around a specific WhatsApp message."
+    },
+    {
+     "name": "list_view_once",
+     "description": "List view-once (\"open once\") messages that WE SENT.\n\nIMPORTANT - this only ever lists OUTGOING view-once media, and that is\na hard limit, not a gap to work around. Since Meta's server-side fix of\n~Nov 2024, view-once media sent TO this account is never delivered to a\nlinked device at all: the server strips the encrypted payload and sends\nonly an `unavailable` placeholder. whatsmeow then asks the primary\nphone to resend and the phone declines. There is no ciphertext to\ndecrypt and no code change that obtains one. Only the phone itself ever\nholds incoming view-once media.\n\nSo: if the user asks to save a view-once photo SOMEONE SENT THEM, the\nhonest answer is that it is not possible through this bridge - do not\nimply otherwise or go hunting for the message id. It was never stored.\n\nFor our own sends, save_media / view_media work normally, including\nafter the recipient has burned their view.\n\nOnly sends made after 2026-07-16 are flagged; earlier ones are\nindistinguishable from ordinary media (the envelope is unwrapped before\nstorage, so there is nothing to back-fill from)."
+    },
+    {
+     "name": "count_messages",
+     "description": "Cheap COUNT(*) with optional filters. Pass media_type=\"\" for\ntext-only, media_type=\"image\" for images, etc."
+    },
+    {
+     "name": "forward_message",
+     "description": "Forward an existing message from one chat to another (person or group).\n\nPreserves media when the original message has raw protobuf stored\n(messages received AFTER batch alpha only); older text messages are\nforwarded as text. The forwarded pill is shown to the recipient."
+    },
+    {
+     "name": "get_user_info_bulk",
+     "description": "Bulk UserInfo: status text, picture_id, device count, verified-business name."
+    },
+    {
+     "name": "post_status",
+     "description": "Post a text update to your WhatsApp status broadcast (visible to your contacts)."
+    },
+    {
+     "name": "search_voice_notes",
+     "description": "Search across transcribed voice notes by their spoken content.\n\nFull-text search over voice-note transcripts (Arabic-aware). Returns\nmatching messages with a snippet; pair the message_id with\nget_message_context to see it in its chat, or transcribe_voice for the\nfull text."
+    }
+   ]
+  },
+  {
+   "q": "how active has Kareem been across all my chats this week",
+   "gold": "sender_activity",
+   "alts": [],
+   "find_tool_top8": [
+    {
+     "name": "get_top_active_chats",
+     "description": "Chats sorted by message count in the last N hours (default 24)."
+    },
+    {
+     "name": "search_all_messages",
+     "description": "Search message content across ALL chats via FTS5.\n\nReturns up to `limit` matches with a snippet() preview (terms wrapped\nin <mark>...</mark>). Way more useful than list_messages with query\nbecause it doesn't require knowing the chat_jid up front."
+    },
+    {
+     "name": "sender_activity",
+     "description": "Cross-chat activity for one sender over the last N days.\n\nReturns {total_messages, by_chat[top 20], by_day[]}."
+    },
+    {
+     "name": "list_all_media_by_type",
+     "description": "Cross-chat media search by type (\"image\" / \"video\" / \"audio\" /\n\"document\"). Newest first; pass `before` (ISO) for cursor pagination."
+    },
+    {
+     "name": "list_media_in_chat",
+     "description": "Enumerate media messages in a chat (without downloading them).\n\nUseful for \"what voice notes did X send last week\" workflows -\nreturns IDs/timestamps/sizes only. Pair with save_media (to get a file) or\nview_media (to look at one) to\nactually fetch a specific one."
+    },
+    {
+     "name": "get_quiet_chats",
+     "description": "Chats you haven't heard from in the last N days (default 30), oldest first."
+    },
+    {
+     "name": "get_contact_chats",
+     "description": "Get all WhatsApp chats involving the contact."
+    },
+    {
+     "name": "list_chat_notes",
+     "description": "List all chat notes, most recently updated first."
+    }
+   ]
+  },
+  {
+   "q": "show me his profile picture",
+   "gold": "get_profile_picture",
+   "alts": [],
+   "find_tool_top8": [
+    {
+     "name": "get_profile_picture",
+     "description": "Get the URL of a contact's or group's profile picture."
+    },
+    {
+     "name": "get_business_profile",
+     "description": "Verified WhatsApp Business profile metadata: address, email, categories, hours TZ."
+    },
+    {
+     "name": "get_user_info_bulk",
+     "description": "Bulk UserInfo: status text, picture_id, device count, verified-business name."
+    },
+    {
+     "name": "get_privacy_settings",
+     "description": "Fetch your WhatsApp privacy settings (last_seen, status, profile, read receipts, group_add, online, call_add)."
+    },
+    {
+     "name": "set_status_message",
+     "description": "Update your WhatsApp 'About' text (the short bio shown in your profile)."
+    }
+   ]
+  },
+  {
+   "q": "attach the paid tag to that specific message",
+   "gold": "set_message_label",
+   "alts": [],
+   "find_tool_top8": [
+    {
+     "name": "set_message_label",
+     "description": "Attach or detach a Business label on a specific message."
+    },
+    {
+     "name": "get_message_context",
+     "description": "Get context around a specific WhatsApp message."
+    },
+    {
+     "name": "schedule_message",
+     "description": "Queue a message to send at a future time."
+    },
+    {
+     "name": "star_message",
+     "description": "Star (or unstar) a specific message."
+    },
+    {
+     "name": "set_chat_label",
+     "description": "Attach or detach a Business label on a chat."
+    },
+    {
+     "name": "delete_message",
+     "description": "Delete a WhatsApp message for everyone (revoke). Revoke window is 1h08m."
+    },
+    {
+     "name": "edit_message",
+     "description": "Edit one of YOUR sent WhatsApp messages within the 24-hour edit window."
+    },
+    {
+     "name": "forward_message",
+     "description": "Forward an existing message from one chat to another (person or group).\n\nPreserves media when the original message has raw protobuf stored\n(messages received AFTER batch alpha only); older text messages are\nforwarded as text. The forwarded pill is shown to the recipient."
+    }
+   ]
+  }
+ ],
+ "catalog": [
+  {
+   "name": "archive_chat",
+   "description": "Archive (or unarchive) a chat."
+  },
+  {
+   "name": "backfill_group_participants",
+   "description": "One-shot: populate group_participants from existing message history."
+  },
+  {
+   "name": "block_user",
+   "description": "Block a WhatsApp contact (they will not see you online and cannot message you)."
+  },
+  {
+   "name": "bridge_health",
+   "description": "Get the WhatsApp bridge connection state (connected, logged_in, push_name)."
+  },
+  {
+   "name": "cancel_scheduled",
+   "description": "Cancel a pending scheduled message (irreversible)."
+  },
+  {
+   "name": "check_phones_on_whatsapp",
+   "description": "Resolve raw phone numbers (E.164 without +) to WhatsApp JIDs."
+  },
+  {
+   "name": "count_messages",
+   "description": "Cheap COUNT(*) with optional filters. Pass media_type=\"\" for"
+  },
+  {
+   "name": "create_group",
+   "description": "Create a new WhatsApp group with the caller as admin."
+  },
+  {
+   "name": "create_poll",
+   "description": "Send a poll to a chat; returns message_id. Read the tally with"
+  },
+  {
+   "name": "delete_chat",
+   "description": "Delete a chat both remotely (WhatsApp app state) and locally."
+  },
+  {
+   "name": "delete_draft",
+   "description": "Delete a draft (irreversible)."
+  },
+  {
+   "name": "delete_message",
+   "description": "Delete a WhatsApp message for everyone (revoke). Revoke window is 1h08m."
+  },
+  {
+   "name": "edit_label",
+   "description": "Create, rename, recolor, or delete a Business label."
+  },
+  {
+   "name": "edit_message",
+   "description": "Edit one of YOUR sent WhatsApp messages within the 24-hour edit window."
+  },
+  {
+   "name": "export_chat",
+   "description": "LLM-friendly chat export."
+  },
+  {
+   "name": "forward_message",
+   "description": "Forward an existing message from one chat to another (person or group)."
+  },
+  {
+   "name": "get_blocklist",
+   "description": "Get the list of currently blocked contact JIDs."
+  },
+  {
+   "name": "get_bridge_diagnostics",
+   "description": "Extended diagnostics: WAL bytes, reactions/participants counts,"
+  },
+  {
+   "name": "get_bridge_stats",
+   "description": "Operational stats: connected, logged_in, chats/messages/media counts,"
+  },
+  {
+   "name": "get_business_profile",
+   "description": "Verified WhatsApp Business profile metadata: address, email, categories, hours TZ."
+  },
+  {
+   "name": "get_chat",
+   "description": "Get WhatsApp chat metadata by JID."
+  },
+  {
+   "name": "get_chat_note",
+   "description": "Read the private note attached to a chat."
+  },
+  {
+   "name": "get_chat_stats",
+   "description": "Summarise a chat: total messages, from_me count, distinct senders,"
+  },
+  {
+   "name": "get_contact_chats",
+   "description": "Get all WhatsApp chats involving the contact."
+  },
+  {
+   "name": "get_direct_chat_by_contact",
+   "description": "Get WhatsApp chat metadata by sender phone number."
+  },
+  {
+   "name": "get_group_info",
+   "description": "Get full metadata for a group: name, topic, participants, admin status."
+  },
+  {
+   "name": "get_group_invite_link",
+   "description": "Get (or reset) a group's chat.whatsapp.com invite link."
+  },
+  {
+   "name": "get_last_interaction",
+   "description": "Get most recent WhatsApp message involving the contact."
+  },
+  {
+   "name": "get_media_info",
+   "description": "Return media metadata (mime, size, filename, media_type) for a"
+  },
+  {
+   "name": "get_message_context",
+   "description": "Get context around a specific WhatsApp message."
+  },
+  {
+   "name": "get_message_receipts",
+   "description": "Get delivery / read / played receipts for a message you sent."
+  },
+  {
+   "name": "get_message_thread",
+   "description": "Return {original, replies, reply_count} for a message thread."
+  },
+  {
+   "name": "get_newsletter_info",
+   "description": "Get metadata for a WhatsApp newsletter/channel."
+  },
+  {
+   "name": "get_poll_results",
+   "description": "Read a poll's results: vote counts per option and who voted for what,"
+  },
+  {
+   "name": "get_privacy_settings",
+   "description": "Fetch your WhatsApp privacy settings (last_seen, status, profile, read receipts, group_add, online, call_add)."
+  },
+  {
+   "name": "get_profile_picture",
+   "description": "Get the URL of a contact's or group's profile picture."
+  },
+  {
+   "name": "get_quiet_chats",
+   "description": "Chats you haven't heard from in the last N days (default 30), oldest first."
+  },
+  {
+   "name": "get_reactions_on",
+   "description": "List all reactions on a specific message (who reacted, with what emoji, when)."
+  },
+  {
+   "name": "get_replies_to",
+   "description": "List messages that quote-reply to the given message."
+  },
+  {
+   "name": "get_top_active_chats",
+   "description": "Chats sorted by message count in the last N hours (default 24)."
+  },
+  {
+   "name": "get_user_info_bulk",
+   "description": "Bulk UserInfo: status text, picture_id, device count, verified-business name."
+  },
+  {
+   "name": "groups_with_member",
+   "description": "Which groups contain this contact (based on observed activity)."
+  },
+  {
+   "name": "join_group_by_link",
+   "description": "Preview or join a WhatsApp group via invite link."
+  },
+  {
+   "name": "leave_group",
+   "description": "Exit a WhatsApp group. Irreversible without re-invite."
+  },
+  {
+   "name": "list_all_media_by_type",
+   "description": "Cross-chat media search by type (\"image\" / \"video\" / \"audio\" /"
+  },
+  {
+   "name": "list_chat_notes",
+   "description": "List all chat notes, most recently updated first."
+  },
+  {
+   "name": "list_chats",
+   "description": "Get WhatsApp chats matching specified criteria."
+  },
+  {
+   "name": "list_chats_by_state",
+   "description": "List chats matching a state flag."
+  },
+  {
+   "name": "list_drafts",
+   "description": "List saved drafts, most recently updated first."
+  },
+  {
+   "name": "list_group_members",
+   "description": "Members of a group (based on observed activity in messages)."
+  },
+  {
+   "name": "list_joined_groups",
+   "description": "List all WhatsApp groups the bridge account is a member of."
+  },
+  {
+   "name": "list_media_in_chat",
+   "description": "Enumerate media messages in a chat (without downloading them)."
+  },
+  {
+   "name": "list_messages",
+   "description": "Get WhatsApp messages matching specified criteria with optional context."
+  },
+  {
+   "name": "list_scheduled",
+   "description": "List queued/sent/cancelled/failed scheduled messages."
+  },
+  {
+   "name": "list_subscribed_newsletters",
+   "description": "List all WhatsApp newsletters/channels the bridge account follows."
+  },
+  {
+   "name": "list_view_once",
+   "description": "List view-once (\"open once\") messages that WE SENT."
+  },
+  {
+   "name": "mark_chat_unread",
+   "description": "Mark a chat as unread (blue dot) or read."
+  },
+  {
+   "name": "mark_read",
+   "description": "Send read receipts (double blue tick) for one or more messages."
+  },
+  {
+   "name": "mention_everyone",
+   "description": "Send a message to a group that @-mentions every participant."
+  },
+  {
+   "name": "messages_by_day",
+   "description": "Daily message-count histogram for a chat over the last N days."
+  },
+  {
+   "name": "mute_chat",
+   "description": "Mute (or unmute) a chat's notifications."
+  },
+  {
+   "name": "pin_chat",
+   "description": "Pin (or unpin) a chat to the top of the chat list."
+  },
+  {
+   "name": "post_status",
+   "description": "Post a text update to your WhatsApp status broadcast (visible to your contacts)."
+  },
+  {
+   "name": "react_to_message",
+   "description": "React to a WhatsApp message with an emoji (empty string clears the reaction)."
+  },
+  {
+   "name": "save_draft",
+   "description": "Save a reusable draft. Optional pre-filled recipient."
+  },
+  {
+   "name": "save_media",
+   "description": "Get a download link that saves WhatsApp media to the user's Downloads"
+  },
+  {
+   "name": "schedule_message",
+   "description": "Queue a message to send at a future time."
+  },
+  {
+   "name": "search_all_messages",
+   "description": "Search message content across ALL chats via FTS5."
+  },
+  {
+   "name": "search_by_reaction",
+   "description": "Find messages that received a specific reaction emoji."
+  },
+  {
+   "name": "search_contacts",
+   "description": "Search WhatsApp contacts by name or phone number."
+  },
+  {
+   "name": "search_voice_notes",
+   "description": "Search across transcribed voice notes by their spoken content."
+  },
+  {
+   "name": "send_audio_message",
+   "description": "Send an audio file as a WhatsApp voice message."
+  },
+  {
+   "name": "send_contact_card",
+   "description": "Share one or more contact cards via vCard 3.0."
+  },
+  {
+   "name": "send_draft",
+   "description": "Send a saved draft immediately."
+  },
+  {
+   "name": "send_file",
+   "description": "Send a file (image, video, raw audio, document) via WhatsApp."
+  },
+  {
+   "name": "send_location",
+   "description": "Share a static map pin with a contact or group."
+  },
+  {
+   "name": "send_message",
+   "description": "Send a WhatsApp message to a person or group. For group chats use the JID."
+  },
+  {
+   "name": "send_presence",
+   "description": "Send a typing or recording indicator to a chat."
+  },
+  {
+   "name": "send_sticker",
+   "description": "Send a WhatsApp sticker (WebP, ideally 512x512)."
+  },
+  {
+   "name": "send_view_once_media",
+   "description": "Send an image or video as a 'view once' WhatsApp message."
+  },
+  {
+   "name": "sender_activity",
+   "description": "Cross-chat activity for one sender over the last N days."
+  },
+  {
+   "name": "set_chat_label",
+   "description": "Attach or detach a Business label on a chat."
+  },
+  {
+   "name": "set_chat_note",
+   "description": "Attach a private note to a chat (or pass empty note to clear)."
+  },
+  {
+   "name": "set_disappearing",
+   "description": "Set the ephemeral / disappearing message timer for a chat."
+  },
+  {
+   "name": "set_message_label",
+   "description": "Attach or detach a Business label on a specific message."
+  },
+  {
+   "name": "set_status_message",
+   "description": "Update your WhatsApp 'About' text (the short bio shown in your profile)."
+  },
+  {
+   "name": "star_message",
+   "description": "Star (or unstar) a specific message."
+  },
+  {
+   "name": "transcribe_voice",
+   "description": "Transcribe a voice note / audio message to text."
+  },
+  {
+   "name": "unblock_user",
+   "description": "Unblock a previously-blocked WhatsApp contact."
+  },
+  {
+   "name": "update_group_participants",
+   "description": "Add, remove, promote, or demote group members. Caller must be an admin."
+  },
+  {
+   "name": "view_media",
+   "description": "Fetch WhatsApp media inline so YOU (the model) can see/hear it and"
+  },
+  {
+   "name": "vote_in_poll",
+   "description": "Cast a vote on any poll (yours or someone else's). Votes REPLACE the"
+  }
+ ],
+ "core_tools": [
+  "bridge_health",
+  "create_poll",
+  "delete_message",
+  "edit_message",
+  "forward_message",
+  "get_chat",
+  "get_direct_chat_by_contact",
+  "get_media_info",
+  "get_message_context",
+  "get_poll_results",
+  "list_all_media_by_type",
+  "list_chats",
+  "list_media_in_chat",
+  "list_messages",
+  "list_view_once",
+  "mark_read",
+  "react_to_message",
+  "save_media",
+  "search_all_messages",
+  "search_contacts",
+  "search_voice_notes",
+  "send_audio_message",
+  "send_file",
+  "send_message",
+  "send_view_once_media",
+  "transcribe_voice",
+  "view_media",
+  "vote_in_poll"
+ ]
+}

@@ -1,0 +1,28 @@
+version: 2
+updates:
+  # Python MCP server (uv-managed, standard pip ecosystem)
+  - package-ecosystem: pip
+    directory: /whatsapp-mcp-server
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      python-minor-and-patch:
+        update-types: [minor, patch]
+
+  # Go bridge
+  - package-ecosystem: gomod
+    directory: /whatsapp-bridge
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      go-minor-and-patch:
+        update-types: [minor, patch]
+
+  # GitHub Actions used by the CI workflow
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5

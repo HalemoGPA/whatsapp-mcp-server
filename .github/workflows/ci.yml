@@ -1,0 +1,85 @@
+name: CI
+
+# Everything here runs without a WhatsApp account, a bridge, or network access
+# to WhatsApp. The suites that genuinely need a paired session (tests/smoke.sh,
+# tests/toolsearch-eval, tests/voice-harness) are run by hand against a live
+# server; see tests/README.md.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python:
+    name: python (lint + tests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Lint
+        # `ruff format` is deliberately NOT enforced. Several modules use
+        # hand-aligned constant blocks and table-like literals that the
+        # formatter would flatten; the lint rules catch defects, the formatter
+        # would only churn the diff.
+        run: uvx ruff@0.8 check .
+
+      - name: Tests
+        run: uvx --with pytest --from pytest pytest
+
+  go:
+    name: go (lint + test + build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: whatsapp-bridge
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: whatsapp-bridge/go.mod
+          cache-dependency-path: whatsapp-bridge/go.sum
+
+      - name: Vet
+        # sqlite_fts5 is mandatory: without it the bridge crash-loops on the
+        # FTS5 virtual table at startup.
+        run: go vet -tags sqlite_fts5 ./...
+
+      - name: Lint (staticcheck)
+        # staticcheck reads whatsapp-bridge/staticcheck.conf (all default checks
+        # minus the whatsmeow SA1019 deprecation churn).
+        run: go run honnef.co/go/tools/cmd/staticcheck@2025.1 -tags sqlite_fts5 ./...
+
+      - name: Test
+        run: go test -tags sqlite_fts5 ./...
+
+      - name: Build
+        run: go build -tags sqlite_fts5 -trimpath -ldflags="-s -w" -o /dev/null .
+
+  secrets:
+    name: secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

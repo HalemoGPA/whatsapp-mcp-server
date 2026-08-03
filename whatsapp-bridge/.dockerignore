@@ -1,0 +1,7 @@
+# Never bake a developer's local secret into an image
+.env
+*.env
+
+store/
+whatsapp-bridge-bin
+*.log

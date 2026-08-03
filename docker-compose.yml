@@ -1,0 +1,165 @@
+# Private WhatsApp MCP - bridge (Go) + mcp (Python), private net, loopback only.
+#
+#   bridge : holds the WhatsApp connection, writes SQLite, internal REST API :8080
+#   mcp    : FastMCP over Streamable HTTP at /mcp, owner-token auth, on 127.0.0.1:9100
+#
+# The bridge port is NEVER published to a public interface (uses `expose`, so it's
+# reachable only by the mcp container over the `wa` network). Only the mcp port is
+# published, and only on loopback for nginx to proxy.
+services:
+  bridge:
+    build: ./whatsapp-bridge
+    image: whatsapp-bridge:latest
+    container_name: whatsapp-bridge
+    restart: unless-stopped
+    mem_limit: 512m
+    cpus: "0.5"
+    # Healthcheck hits the bridge's GET /api/health. A dead WhatsApp session
+    # (websocket EOF without auto-reconnect, LoggedOut, app-state stuck)
+    # leaves the process alive but useless; this surfaces it as unhealthy.
+    #
+    # NOTE: docker does NOT act on "unhealthy" - restart policies fire on
+    # container *exit* only. An unhealthy-but-running container sits there
+    # forever. (This exact assumption cost the mcp container an 18h silent
+    # outage on 2026-07-16.) The autoheal sidecar below is what actually
+    # restarts it; the label opts this container in.
+    labels:
+      autoheal: "true"
+    # Distroless has no shell; the bridge binary itself runs the probe via
+    # `-healthcheck`, which hits /api/health and exits 0 iff connected+logged_in.
+    healthcheck:
+      test: ["CMD", "/app/whatsapp-bridge-bin", "-healthcheck"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    # Go runtime memory tuning. GOMEMLIMIT (added 1.19) is the recommended primary
+    # lever in Go's official GC guide for containerised services with a fixed
+    # memory budget - it tells the GC to keep heap growth under this ceiling
+    # even when GOGC would otherwise delay collection. We set it at ~75% of
+    # mem_limit to leave 5-10% headroom per the official guidance. GOGC=50
+    # trades a bit more CPU for a smaller resident set (default 100). Bridge
+    # steady-state is ~14MB, so this is belt-and-braces against future bloat.
+    environment:
+      # whatsmeow log level. DEBUG surfaces protocol detail INFO hides (e.g.
+      # whether a request for an unavailable message reached the phone).
+      # Chatty on a busy account - leave at INFO unless investigating.
+      BRIDGE_WA_LOG_LEVEL: ${BRIDGE_WA_LOG_LEVEL:-INFO}
+      GOMEMLIMIT: "384MiB"
+      GOGC: "50"
+    volumes:
+      - wa-store:/app/store        # SQLite (messages.db, whatsapp.db) + session persist here
+    expose:
+      - "8080"                     # private network only; NO host port mapping
+    networks: [wa]
+    logging:
+      driver: json-file
+      # Bumped from 10MB x 5 -> 25MB x 5 so a 24h window of bridge logs
+      # survives even with verbose per-message logging during history sync.
+      options: { max-size: "25m", max-file: "5" }
+
+  # (bridge env continues above)
+
+  mcp:
+    build: ./whatsapp-mcp-server
+    image: whatsapp-mcp:latest
+    container_name: whatsapp-mcp
+    restart: unless-stopped
+    mem_limit: 512m
+    cpus: "0.5"
+    depends_on: [bridge]
+    environment:
+      WHATSAPP_MCP_TOKEN: ${WHATSAPP_MCP_TOKEN:?set WHATSAPP_MCP_TOKEN in .env}
+      WHATSAPP_API_BASE_URL: http://bridge:8080/api
+      MESSAGES_DB_PATH: /data/store/messages.db
+      WHATSAPP_MCP_LOG_LEVEL: ${WHATSAPP_MCP_LOG_LEVEL:-INFO}
+      WHATSAPP_MCP_AUDIT_LOG: /var/log/wamcp/audit.jsonl
+      WHATSAPP_MCP_MEDIA_DIR: /data/media
+      WHATSAPP_MCP_PUBLIC_URL: ${WHATSAPP_MCP_PUBLIC_URL:-https://whatsapp-mcp.example.com}
+      # Voice-note transcription. Empty keys -> worker stays dormant.
+      SPEECHMATICS_API_KEYS: ${SPEECHMATICS_API_KEYS:-}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      TRANSCRIBE_SINCE: ${TRANSCRIBE_SINCE:-2026-07-02 00:00:00}
+      TRANSCRIPTS_DB: /var/log/wamcp/transcripts.db
+      WHATSAPP_MCP_SHORT_DB: /var/log/wamcp/shorturls.db
+      WHATSAPP_MCP_SHORT_CODE_BYTES: ${WHATSAPP_MCP_SHORT_CODE_BYTES:-18}
+      WHATSAPP_MCP_TOOLSET: ${WHATSAPP_MCP_TOOLSET:-minimal}
+      TRANSCRIBE_POLL_SEC: ${TRANSCRIBE_POLL_SEC:-10}
+      TRANSCRIBE_BATCH: ${TRANSCRIBE_BATCH:-15}
+      # Optional semantic tool retrieval for find_tool. Set ANY one key and it
+      # auto-activates (hybrid lexical+semantic); unset -> pure lexical (default).
+      VOYAGE_API_KEY: ${VOYAGE_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      WHATSAPP_MCP_EMBED_PROVIDER: ${WHATSAPP_MCP_EMBED_PROVIDER:-auto}
+      WHATSAPP_MCP_EMBED_MODEL: ${WHATSAPP_MCP_EMBED_MODEL:-}
+      WHATSAPP_MCP_EMBED_WEIGHT: ${WHATSAPP_MCP_EMBED_WEIGHT:-0.6}
+    volumes:
+      - wa-store:/data/store:ro    # reads the SAME SQLite the bridge writes (read-only)
+      - wa-audit:/var/log/wamcp    # G8: append-only audit log volume (writable)
+      - wa-media:/data/media       # decrypted media cache served via signed URLs
+    ports:
+      - "127.0.0.1:9100:9000"      # loopback only; nginx terminates TLS and proxies in
+    networks: [wa]
+    # The default nofile soft limit is 1024. On 2026-07-16 a connection leak in
+    # the scheduler exhausted it in ~4h: sqlite could no longer open files and
+    # uvicorn's accept() started failing with EMFILE, so the process kept
+    # running while serving nothing. The leak is fixed at source, but 1024 is
+    # far too low for a long-lived async server regardless - 65536 is the
+    # standard production floor and turns a future fd bug into slow degradation
+    # instead of a silent outage.
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    labels:
+      # Scopes the autoheal sidecar to this container only.
+      autoheal: "true"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:9000/health',timeout=2).status==200 else 1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "5" }
+
+  # Docker never restarts a container for being unhealthy - only for exiting.
+  # Without this, a wedged container stays wedged until a human notices, which
+  # is exactly how the mcp container sat dead for 18 hours on 2026-07-16 while
+  # `docker ps` cheerfully reported "Up".
+  #
+  # Scoped by label (AUTOHEAL_CONTAINER_LABEL=autoheal), so it only ever touches
+  # the two containers that opt in - not every container on this box, several of
+  # which are other services.
+  #
+  # Caveat worth knowing: the docker socket is root-equivalent. autoheal is a
+  # small, widely-used image, but if you want this locked down further the next
+  # step is a socket-proxy (e.g. tecnativa/docker-socket-proxy) restricted to
+  # POST /containers/*/restart.
+  autoheal:
+    image: willfarrell/autoheal:1.2.0
+    container_name: wa-autoheal
+    restart: always
+    mem_limit: 64m
+    environment:
+      AUTOHEAL_CONTAINER_LABEL: autoheal
+      AUTOHEAL_INTERVAL: 15           # seconds between checks
+      AUTOHEAL_START_PERIOD: 60       # grace before first check after boot
+      AUTOHEAL_DEFAULT_STOP_TIMEOUT: 30
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    # Deliberately NOT on the `wa` network: it talks to the docker socket only.
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+
+volumes:
+  wa-store:
+  wa-audit:
+  wa-media:
+
+networks:
+  wa:
+    driver: bridge

@@ -1,0 +1,14 @@
+# Never bake a developer's local secret into an image
+.env
+*.env
+
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+README.md
+.git/
+.gitignore

@@ -1,0 +1,26 @@
+{
+ "picks": [
+  {"i": 0, "tool": "groups_with_member", "browsed": false},
+  {"i": 1, "tool": "update_group_participants", "browsed": true},
+  {"i": 2, "tool": "leave_group", "browsed": true},
+  {"i": 3, "tool": "mute_chat", "browsed": true},
+  {"i": 4, "tool": "block_user", "browsed": true},
+  {"i": 5, "tool": "list_drafts", "browsed": true},
+  {"i": 6, "tool": "list_scheduled", "browsed": true},
+  {"i": 7, "tool": "archive_chat", "browsed": true},
+  {"i": 8, "tool": "get_top_active_chats", "browsed": true},
+  {"i": 9, "tool": "count_messages", "browsed": true},
+  {"i": 10, "tool": "export_chat", "browsed": true},
+  {"i": 11, "tool": "get_profile_picture", "browsed": true},
+  {"i": 12, "tool": "get_bridge_stats", "browsed": true},
+  {"i": 13, "tool": "get_replies_to", "browsed": true},
+  {"i": 14, "tool": "get_last_interaction", "browsed": false},
+  {"i": 15, "tool": "get_group_info", "browsed": false},
+  {"i": 16, "tool": "mute_chat", "browsed": false},
+  {"i": 17, "tool": "schedule_message", "browsed": false},
+  {"i": 18, "tool": "star_message", "browsed": false},
+  {"i": 19, "tool": "sender_activity", "browsed": false},
+  {"i": 20, "tool": "get_profile_picture", "browsed": false},
+  {"i": 21, "tool": "set_message_label", "browsed": false}
+ ]
+}

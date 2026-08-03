@@ -1,0 +1,66 @@
+# Tooling config for the repository as a whole.
+#
+# This file deliberately declares NO [project]: the installable package is
+# whatsapp-mcp-server/, and the Docker build targets that directory. This is
+# only here so `pytest` and `ruff` behave identically from the repo root, in CI,
+# and in an editor.
+
+[tool.pytest.ini_options]
+# The offline suite. No WhatsApp account, no bridge, no network - so CI and a
+# fresh clone can both run it. The on-box suites (tests/smoke.sh,
+# tests/toolsearch-eval, tests/voice-harness) need a live server and are run
+# manually; see tests/README.md.
+testpaths = ["tests/unit"]
+addopts = "-q --strict-markers"
+pythonpath = ["whatsapp-mcp-server"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["whatsapp-bridge"]
+
+[tool.ruff.lint]
+select = [
+    "E", "F", "W",   # pycodestyle + pyflakes
+    "UP",            # pyupgrade
+    "B",             # bugbear
+    "SIM",           # simplify
+    "RUF",
+]
+# "I" (import sorting) is deliberately NOT selected. tools.py imports ~80 names
+# from whatsapp.py in one block, grouped by feature batch with comments marking
+# each group. Sorting it alphabetically explodes that into ~80 separate
+# statements and discards the grouping, which is a real readability loss for a
+# rule that catches no defects.
+ignore = [
+    # Long lines here are almost always prose in a docstring, and this repo
+    # treats the docstrings as the primary documentation.
+    "E501",
+    # FastMCP tool signatures legitimately evaluate calls in defaults.
+    "B008",
+    # Arabic is a first-class language for this server: transcription prompts
+    # and language hints contain real Arabic letters, not confusable Latin.
+    "RUF001", "RUF002", "RUF003",
+    # Paired statements on one line (`x = 1; y = 2`) are used deliberately for
+    # tightly-coupled assignments; flagging them adds noise without a defect.
+    "E702",
+    # Several modules place a small config/constants block above their imports
+    # so the knobs are the first thing you read. That ordering is the point.
+    "E402",
+    # Collapsing `if guard: if (x := f()) is not None:` into one condition with
+    # a walrus is shorter and harder to read. Kept as two.
+    "SIM102",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# The tests pin invariants that live below the public tool surface, so they
+# import private helpers on purpose, after a sys.path insert.
+"tests/unit/**" = ["E402"]
+# The eval and probe builders are one-shot scripts run by hand, not library
+# code: a top-level `open()` whose handle lives for the length of the process
+# is the intent, and imports follow a path setup.
+"tests/toolsearch-eval/**" = ["E402", "SIM115"]
+"tests/voice-harness/**" = ["E402", "SIM115"]
+# audio.py is carried unchanged from upstream. Left alone on purpose so the
+# diff against lharries/whatsapp-mcp stays honest about what we did not touch.
+"whatsapp-mcp-server/audio.py" = ["SIM115"]

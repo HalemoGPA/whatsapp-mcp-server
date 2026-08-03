@@ -1,0 +1,283 @@
+{"cases": [
+{"q": "find me the number for that guy Ahmed from work", "gold": "search_contacts", "alts": []},
+{"q": "do I have anyone saved under the name Sara?", "gold": "search_contacts", "alts": []},
+{"q": "look up who this +201234 number belongs to in my contacts", "gold": "search_contacts", "alts": []},
+
+{"q": "pull up the last few texts where someone mentioned the invoice", "gold": "list_messages", "alts": ["search_all_messages"]},
+{"q": "show me what was said in the office chat yesterday", "gold": "list_messages", "alts": []},
+{"q": "grab the recent messages from my mom", "gold": "list_messages", "alts": []},
+
+{"q": "what conversations do I have going right now", "gold": "list_chats", "alts": []},
+{"q": "give me a rundown of all my open threads", "gold": "list_chats", "alts": []},
+
+{"q": "when did I last hear from my brother", "gold": "get_last_interaction", "alts": []},
+{"q": "what was the most recent thing between me and Layla", "gold": "get_last_interaction", "alts": []},
+
+{"q": "show me everything I've got going with Omar across all chats", "gold": "get_contact_chats", "alts": []},
+{"q": "which threads is Nour actually part of", "gold": "get_contact_chats", "alts": []},
+
+{"q": "pull the direct thread with the number 201002003004", "gold": "get_direct_chat_by_contact", "alts": []},
+{"q": "open my one-on-one with that phone number", "gold": "get_direct_chat_by_contact", "alts": []},
+
+{"q": "tell my wife I'll be home by 8", "gold": "send_message", "alts": []},
+{"q": "shoot a quick text to the landlord saying I'll pay tomorrow", "gold": "send_message", "alts": []},
+{"q": "drop a message in the family group that dinner's ready", "gold": "send_message", "alts": []},
+
+{"q": "send this PDF over to my accountant", "gold": "send_file", "alts": []},
+{"q": "share that photo with the group", "gold": "send_file", "alts": []},
+{"q": "fire off the spreadsheet to Karim", "gold": "send_file", "alts": []},
+
+{"q": "record this and send it as a voice note to Dad", "gold": "send_audio_message", "alts": ["send_file"]},
+{"q": "push this audio clip to her as a proper voice message", "gold": "send_audio_message", "alts": []},
+
+{"q": "what does this voice note actually say", "gold": "transcribe_voice", "alts": ["view_media"]},
+{"q": "can you write out what she said in that audio", "gold": "transcribe_voice", "alts": ["view_media"]},
+{"q": "turn this recording into text for me", "gold": "transcribe_voice", "alts": []},
+
+{"q": "did I ever get a voice message talking about the deposit refund", "gold": "search_voice_notes", "alts": []},
+{"q": "find that audio where someone mentioned the airport pickup", "gold": "search_voice_notes", "alts": []},
+
+{"q": "let her know I've seen her messages", "gold": "mark_read", "alts": []},
+{"q": "give her blue ticks on those texts", "gold": "mark_read", "alts": []},
+
+{"q": "throw a thumbs up on his last message", "gold": "react_to_message", "alts": []},
+{"q": "heart that photo she just sent", "gold": "react_to_message", "alts": []},
+{"q": "slap a laughing emoji on that", "gold": "react_to_message", "alts": []},
+
+{"q": "who thumbs-upped my message in the group", "gold": "get_reactions_on", "alts": []},
+{"q": "show me everyone who reacted to that announcement", "gold": "get_reactions_on", "alts": []},
+
+{"q": "find all the messages people gave a fire emoji to", "gold": "search_by_reaction", "alts": []},
+{"q": "which texts got a heart reaction", "gold": "search_by_reaction", "alts": []},
+
+{"q": "save that picture she sent to my downloads", "gold": "save_media", "alts": []},
+{"q": "I want to download the video from the group chat", "gold": "save_media", "alts": []},
+
+{"q": "let me actually see the image he attached", "gold": "view_media", "alts": []},
+{"q": "look at the photo in that last message and tell me what's in it", "gold": "view_media", "alts": []},
+
+{"q": "what files and pics are floating around in this chat", "gold": "list_media_in_chat", "alts": []},
+{"q": "list out all the attachments in my thread with Hana", "gold": "list_media_in_chat", "alts": []},
+
+{"q": "show me every video anyone's sent me across all my chats", "gold": "list_all_media_by_type", "alts": []},
+{"q": "round up all the images from everywhere", "gold": "list_all_media_by_type", "alts": []},
+
+{"q": "set up a quick yes/no vote in the group about Friday", "gold": "create_poll", "alts": []},
+{"q": "ask everyone which restaurant they want with a poll", "gold": "create_poll", "alts": []},
+
+{"q": "how did the vote turn out", "gold": "get_poll_results", "alts": []},
+{"q": "who picked what on the lunch poll", "gold": "get_poll_results", "alts": []},
+
+{"q": "put me down for pizza on the group survey", "gold": "vote_in_poll", "alts": []},
+{"q": "pick option two for me on the survey", "gold": "vote_in_poll", "alts": []},
+
+{"q": "spin up a new group with me, Ali, and Sara", "gold": "create_group", "alts": []},
+{"q": "start a fresh group chat for the trip planning", "gold": "create_group", "alts": []},
+
+{"q": "kick Tariq out of the project group", "gold": "update_group_participants", "alts": []},
+{"q": "make Layla an admin of the family group", "gold": "update_group_participants", "alts": []},
+{"q": "add my cousin to the group", "gold": "update_group_participants", "alts": []},
+
+{"q": "who's actually in this group", "gold": "list_group_members", "alts": ["get_group_info"]},
+{"q": "give me the member list for the football chat", "gold": "list_group_members", "alts": ["get_group_info"]},
+
+{"q": "what's the topic and admin setup for this group", "gold": "get_group_info", "alts": []},
+{"q": "show me the full details on the work group", "gold": "get_group_info", "alts": []},
+
+{"q": "what groups am I even in", "gold": "list_joined_groups", "alts": []},
+{"q": "list every group I've joined", "gold": "list_joined_groups", "alts": []},
+
+{"q": "which groups do me and Khaled both share", "gold": "groups_with_member", "alts": []},
+{"q": "what groups is that contact a part of with me", "gold": "groups_with_member", "alts": []},
+
+{"q": "get me the share link for this group", "gold": "get_group_invite_link", "alts": []},
+{"q": "reset the old join URL for the group and give me the new one", "gold": "get_group_invite_link", "alts": []},
+
+{"q": "join this group for me: chat.whatsapp.com/abc123", "gold": "join_group_by_link", "alts": []},
+{"q": "hop me into the group from this invite", "gold": "join_group_by_link", "alts": []},
+
+{"q": "get me out of the noisy alumni group", "gold": "leave_group", "alts": []},
+{"q": "I want to exit the neighborhood chat for good", "gold": "leave_group", "alts": []},
+
+{"q": "tag everyone in the fam group and say happy eid", "gold": "mention_everyone", "alts": []},
+{"q": "ping every single person in the team chat about the meeting", "gold": "mention_everyone", "alts": []},
+
+{"q": "shut this group up for the night", "gold": "mute_chat", "alts": []},
+{"q": "silence notifications from the school group", "gold": "mute_chat", "alts": []},
+{"q": "stop this chat from buzzing me", "gold": "mute_chat", "alts": []},
+
+{"q": "stick my wife's chat at the very top", "gold": "pin_chat", "alts": []},
+{"q": "keep the work thread pinned up top", "gold": "pin_chat", "alts": []},
+
+{"q": "block that spammer so they can't reach me", "gold": "block_user", "alts": []},
+{"q": "stop this number from messaging me ever again", "gold": "block_user", "alts": []},
+
+{"q": "unblock my uncle, I overreacted", "gold": "unblock_user", "alts": []},
+{"q": "let that contact message me again", "gold": "unblock_user", "alts": []},
+
+{"q": "who have I got blocked right now", "gold": "get_blocklist", "alts": []},
+{"q": "show me my blocked list", "gold": "get_blocklist", "alts": []},
+
+{"q": "save this text as a template I can reuse later", "gold": "save_draft", "alts": []},
+{"q": "stash this message so I can send it again another time", "gold": "save_draft", "alts": []},
+
+{"q": "what drafts have I got saved", "gold": "list_drafts", "alts": []},
+{"q": "show me my stashed message templates", "gold": "list_drafts", "alts": []},
+
+{"q": "go ahead and fire off that saved draft now", "gold": "send_draft", "alts": []},
+{"q": "send out the template I saved earlier", "gold": "send_draft", "alts": []},
+
+{"q": "trash that draft I don't need anymore", "gold": "delete_draft", "alts": []},
+{"q": "get rid of the saved template", "gold": "delete_draft", "alts": []},
+
+{"q": "send this text later tonight around 9", "gold": "schedule_message", "alts": []},
+{"q": "remind them at 8am tomorrow by texting this", "gold": "schedule_message", "alts": []},
+{"q": "queue this up to go out next Monday morning", "gold": "schedule_message", "alts": []},
+
+{"q": "what messages have I got lined up to send later", "gold": "list_scheduled", "alts": []},
+{"q": "show me my pending timed texts", "gold": "list_scheduled", "alts": []},
+
+{"q": "call off that message I set to send tonight", "gold": "cancel_scheduled", "alts": []},
+{"q": "don't send that scheduled one anymore", "gold": "cancel_scheduled", "alts": []},
+
+{"q": "drop a pin of the restaurant location to the group", "gold": "send_location", "alts": []},
+{"q": "share where I am with my friend", "gold": "send_location", "alts": []},
+
+{"q": "send that funny sticker to the chat", "gold": "send_sticker", "alts": []},
+{"q": "slap a sticker on the group conversation", "gold": "send_sticker", "alts": []},
+
+{"q": "forward that message he sent over to my sister", "gold": "forward_message", "alts": []},
+{"q": "pass this along to the other group", "gold": "forward_message", "alts": []},
+
+{"q": "share Ahmed's contact card with my colleague", "gold": "send_contact_card", "alts": []},
+{"q": "send over the plumber's number as a contact", "gold": "send_contact_card", "alts": []},
+
+{"q": "is this number even on whatsapp", "gold": "check_phones_on_whatsapp", "alts": []},
+{"q": "check if these phone numbers have accounts", "gold": "check_phones_on_whatsapp", "alts": []},
+
+{"q": "star that message so I can find it later", "gold": "star_message", "alts": []},
+{"q": "bookmark this text, it's important", "gold": "star_message", "alts": []},
+
+{"q": "put this conversation away, I don't want to see it", "gold": "archive_chat", "alts": []},
+{"q": "archive the old thread with the delivery guy", "gold": "archive_chat", "alts": []},
+
+{"q": "bump this thread back to unread so I remember to reply", "gold": "mark_chat_unread", "alts": []},
+{"q": "flag the thread with a blue dot to deal with later", "gold": "mark_chat_unread", "alts": []},
+
+{"q": "wipe this whole conversation off my phone", "gold": "delete_chat", "alts": []},
+{"q": "get rid of my whole conversation history with that number", "gold": "delete_chat", "alts": []},
+
+{"q": "take back that message I just sent, it had a typo", "gold": "delete_message", "alts": []},
+{"q": "unsend the last thing I wrote in the group", "gold": "delete_message", "alts": []},
+
+{"q": "fix the typo in the message I just sent", "gold": "edit_message", "alts": []},
+{"q": "change what I wrote to say 7pm instead of 6pm", "gold": "edit_message", "alts": []},
+
+{"q": "make messages in this chat vanish after a day", "gold": "set_disappearing", "alts": []},
+{"q": "turn on the auto-delete timer for this thread", "gold": "set_disappearing", "alts": []},
+
+{"q": "who've I been messaging the most lately", "gold": "get_top_active_chats", "alts": []},
+{"q": "which chats have been blowing up today", "gold": "get_top_active_chats", "alts": []},
+
+{"q": "which conversations have gone dead, nobody's texted in weeks", "gold": "get_quiet_chats", "alts": []},
+{"q": "show me chats I haven't heard from in ages", "gold": "get_quiet_chats", "alts": []},
+
+{"q": "how many messages are in my chat with Yasmin total", "gold": "count_messages", "alts": []},
+{"q": "give me a headcount of texts in the work group", "gold": "count_messages", "alts": []},
+
+{"q": "break down this chat for me, how many from me vs them", "gold": "get_chat_stats", "alts": []},
+{"q": "summarize the activity in the family group", "gold": "get_chat_stats", "alts": []},
+
+{"q": "show me a daily chart of how much we texted this month", "gold": "messages_by_day", "alts": []},
+{"q": "graph out the message volume by day for this chat", "gold": "messages_by_day", "alts": []},
+
+{"q": "how active has Kareem been across all my chats this week", "gold": "sender_activity", "alts": []},
+{"q": "track one person's messaging over the last few days everywhere", "gold": "sender_activity", "alts": []},
+
+{"q": "dump the whole conversation with my boss so I can read it back", "gold": "export_chat", "alts": []},
+{"q": "give me a clean export of the group chat", "gold": "export_chat", "alts": []},
+
+{"q": "update my bio to say I'm on vacation", "gold": "set_status_message", "alts": []},
+{"q": "change my about text to 'busy, call me'", "gold": "set_status_message", "alts": []},
+
+{"q": "let all my contacts know we're open till midnight via my story", "gold": "post_status", "alts": []},
+{"q": "put up a story update for all my contacts", "gold": "post_status", "alts": []},
+
+{"q": "who can see when I was last online, check my privacy", "gold": "get_privacy_settings", "alts": []},
+{"q": "show me my read receipt and last seen settings", "gold": "get_privacy_settings", "alts": []},
+
+{"q": "grab that company's business hours and address", "gold": "get_business_profile", "alts": []},
+{"q": "pull up the verified business info for this shop", "gold": "get_business_profile", "alts": []},
+
+{"q": "did my message to Sami actually get delivered and read", "gold": "get_message_receipts", "alts": []},
+{"q": "check if she's seen the text I sent", "gold": "get_message_receipts", "alts": []},
+
+{"q": "show me his profile picture", "gold": "get_profile_picture", "alts": []},
+{"q": "what's the group's display photo", "gold": "get_profile_picture", "alts": []},
+
+{"q": "give me a bulk rundown of these contacts' status text and devices", "gold": "get_user_info_bulk", "alts": []},
+{"q": "look up the about text and picture id for several numbers at once", "gold": "get_user_info_bulk", "alts": []},
+
+{"q": "what channels am I following", "gold": "list_subscribed_newsletters", "alts": []},
+{"q": "list the newsletters I'm subscribed to", "gold": "list_subscribed_newsletters", "alts": []},
+
+{"q": "get the details on that news channel", "gold": "get_newsletter_info", "alts": []},
+{"q": "show me info about the channel I follow", "gold": "get_newsletter_info", "alts": []},
+
+{"q": "make a new label called Clients and color it green", "gold": "edit_label", "alts": []},
+{"q": "rename my 'urgent' label to 'priority'", "gold": "edit_label", "alts": []},
+
+{"q": "tag this whole chat with the VIP label", "gold": "set_chat_label", "alts": []},
+{"q": "put the 'follow up' label on my conversation with the vendor", "gold": "set_chat_label", "alts": []},
+
+{"q": "label just this one message as important", "gold": "set_message_label", "alts": []},
+{"q": "attach the paid tag to that specific message", "gold": "set_message_label", "alts": []},
+
+{"q": "jot down a private note on this chat that he owes me 500", "gold": "set_chat_note", "alts": []},
+{"q": "attach a reminder note to this thread just for me", "gold": "set_chat_note", "alts": []},
+
+{"q": "what's the private note I left on this chat", "gold": "get_chat_note", "alts": []},
+{"q": "read back my note for this conversation", "gold": "get_chat_note", "alts": []},
+
+{"q": "show me all the private notes I've stuck on chats", "gold": "list_chat_notes", "alts": []},
+{"q": "list every chat note I've written", "gold": "list_chat_notes", "alts": []},
+
+{"q": "search all my chats for anyone who mentioned 'refund'", "gold": "search_all_messages", "alts": ["list_messages"]},
+{"q": "hunt through everything for the word 'contract'", "gold": "search_all_messages", "alts": []},
+
+{"q": "send this pic as a disappearing one-time view", "gold": "send_view_once_media", "alts": []},
+{"q": "share this photo so it can only be opened once", "gold": "send_view_once_media", "alts": []},
+
+{"q": "what one-time-view stuff have I sent out", "gold": "list_view_once", "alts": []},
+{"q": "list the open-once photos I've shared", "gold": "list_view_once", "alts": []},
+
+{"q": "show her I'm typing right now", "gold": "send_presence", "alts": []},
+{"q": "make it look like I'm recording a voice note", "gold": "send_presence", "alts": []},
+
+{"q": "is the whatsapp connection even working right now", "gold": "bridge_health", "alts": ["get_bridge_stats"]},
+{"q": "am I still logged in and connected", "gold": "bridge_health", "alts": ["get_bridge_stats"]},
+
+{"q": "give me the operational numbers, how many chats and media stored", "gold": "get_bridge_stats", "alts": []},
+{"q": "what's the total message and media count in the system", "gold": "get_bridge_stats", "alts": []},
+
+{"q": "run the deep health check with all the internal counters", "gold": "get_bridge_diagnostics", "alts": []},
+{"q": "show me the WAL size and reaction counts for debugging", "gold": "get_bridge_diagnostics", "alts": []},
+
+{"q": "pull the metadata on that attachment, its size and file type", "gold": "get_media_info", "alts": []},
+{"q": "what's the mime type and filename of that file he sent", "gold": "get_media_info", "alts": []},
+
+{"q": "show me the messages around that one text so I get the context", "gold": "get_message_context", "alts": []},
+{"q": "what was said right before and after this message", "gold": "get_message_context", "alts": []},
+
+{"q": "who replied to my announcement message", "gold": "get_replies_to", "alts": []},
+{"q": "show me all the quote-replies on that text", "gold": "get_replies_to", "alts": []},
+
+{"q": "give me the full reply thread on this message", "gold": "get_message_thread", "alts": []},
+{"q": "show the original and all its replies together", "gold": "get_message_thread", "alts": []},
+
+{"q": "list the chats that I've currently got archived", "gold": "list_chats_by_state", "alts": []},
+{"q": "show me only my pinned chats", "gold": "list_chats_by_state", "alts": []},
+
+{"q": "get the metadata for this chat by its jid", "gold": "get_chat", "alts": []},
+{"q": "look up the chat info for this group id", "gold": "get_chat", "alts": []}
+]}
