@@ -80,6 +80,15 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # Run gitleaks as a plain CLI scan of the full git history. The
+      # gitleaks-action wrapper is deliberately not used: on pull_request events
+      # it tries to post results back through the GitHub API, which the
+      # read-only token on PR (and Dependabot) runs cannot do, so it fails with
+      # "Resource not accessible by integration" even when the scan is clean.
+      # The CLI has no such dependency and behaves identically on push and PR.
+      - name: gitleaks
+        run: |
+          VERSION=8.24.3
+          curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${VERSION}/gitleaks_${VERSION}_linux_x64.tar.gz" \
+            | tar -xz gitleaks
+          ./gitleaks git . --no-banner --redact --exit-code 1
