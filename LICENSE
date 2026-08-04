@@ -3,10 +3,6 @@ MIT License
 Copyright (c) 2025 Luke Harries
 Copyright (c) 2026 Abdulhaleem Osama
 
-This project began as a fork of https://github.com/lharries/whatsapp-mcp and
-retains that project's MIT license. The Go bridge and the Python MCP server have
-since been substantially rewritten and extended; see README.md for what changed.
-
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
