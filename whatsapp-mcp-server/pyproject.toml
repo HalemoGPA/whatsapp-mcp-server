@@ -14,7 +14,7 @@ dependencies = [
     # httpx arrives transitively via fastmcp but nothing here imports it, so it
     # is deliberately NOT declared - an undeclared import is a bug, and a
     # declared non-import is a lie about what this package needs.
-    "requests>=2.32.3",
+    "requests>=2.34.2",
     "prometheus-client>=0.26.0",
     # media.py: HKDF + AES-CBC to decrypt WhatsApp CDN blobs directly. Already
     # present transitively via fastmcp, but declared because we import it
