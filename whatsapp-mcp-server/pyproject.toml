@@ -25,7 +25,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pytest>=9.1.1",
-    "ruff>=0.16.2",
+    "ruff>=0.16.3",
 ]
 
 # Tool config (pytest, ruff) lives in the repo-root pyproject.toml, because the
