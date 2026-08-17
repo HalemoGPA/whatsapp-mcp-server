@@ -5,7 +5,7 @@ description = "Private, authenticated WhatsApp MCP server (HTTP transport)"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "fastmcp>=3.4.6",
+    "fastmcp>=3.4.7",
     # `[standard]` pulls in uvloop + httptools + websockets - real perf wins
     # on Linux/x86 over the pure-Python defaults; uvicorn picks them up
     # automatically when present.
