@@ -19,7 +19,7 @@ dependencies = [
     # media.py: HKDF + AES-CBC to decrypt WhatsApp CDN blobs directly. Already
     # present transitively via fastmcp, but declared because we import it
     # directly - a transitive pull is not a contract.
-    "cryptography>=50.0.0",
+    "cryptography>=50.0.1",
 ]
 
 [dependency-groups]
