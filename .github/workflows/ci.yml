@@ -40,8 +40,17 @@ jobs:
         # would only churn the diff.
         run: uvx ruff@0.8 check .
 
+      - name: Install locked dependencies
+        # --locked fails when whatsapp-mcp-server/uv.lock no longer matches its
+        # pyproject.toml, so a manifest bump that skips the lockfile cannot merge.
+        # The Docker image installs from this same lock with `uv sync --frozen`.
+        run: uv sync --locked --project whatsapp-mcp-server
+
       - name: Tests
-        run: uvx --with pytest --from pytest pytest
+        # Runs inside the locked environment, so the suite sees the real
+        # dependency versions. tests/unit/test_server_boot.py boots server.py,
+        # which is what catches a FastMCP upgrade that breaks startup.
+        run: uv run --locked --project whatsapp-mcp-server pytest
 
   go:
     name: go (lint + test + build)
