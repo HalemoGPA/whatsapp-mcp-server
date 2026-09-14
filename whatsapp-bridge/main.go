@@ -4832,6 +4832,14 @@ func main() {
 		case <-checkpointCtx.Done():
 			return
 		case <-time.After(15 * time.Second):
+			// Nothing to backfill until the device is paired - the contact
+			// store does not exist yet. Bailing here also keeps an unpaired
+			// bridge alive so its QR code stays scannable, instead of the
+			// process dying 15s into every start and printing a new QR.
+			if !client.IsLoggedIn() {
+				logger.Warnf("Skipping startup backfill: not logged in (scan the QR code to pair)")
+				return
+			}
 			// #244: merge any @lid chats left over from earlier runs BEFORE
 			// backfilling names - once merged there are fewer rows to walk.
 			migrateLIDChats(client, messageStore, logger)
@@ -5205,6 +5213,12 @@ func GetChatName(client *whatsmeow.Client, messageStore *MessageStore, jid types
 // to convey both pieces; storing them split means MCP tools can return them as
 // distinct JSON fields and the client picks the formatting.
 func resolveContactNames(client *whatsmeow.Client, jid types.JID) (saved, push string) {
+	// The sqlstore sub-stores (Contacts, LIDs, ...) are keyed by the device JID
+	// and stay nil until pairing completes, so an unpaired client panics here.
+	// Same guard shape as the Store.LIDs checks in resolveToPN/migrateLIDChats.
+	if client == nil || client.Store == nil || client.Store.Contacts == nil {
+		return "", ""
+	}
 	contact, err := client.Store.Contacts.GetContact(context.Background(), jid)
 	if err != nil {
 		return "", ""
