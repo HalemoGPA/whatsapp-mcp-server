@@ -17,8 +17,10 @@ from __future__ import annotations
 
 from datetime import datetime, UTC
 from typing import Any
+from dataclasses import asdict
 
 from fastmcp.utilities.types import Image, Audio, File
+from fastmcp.exceptions import ToolError
 
 from media import (
     MediaError,
@@ -186,7 +188,7 @@ def register(mcp) -> None:
         context_before: int = 1,
         context_after: int = 1,
         before_timestamp: str | None = None,
-    ) -> list[dict[str, Any]]:
+    ) -> str:
         """Get WhatsApp messages matching specified criteria with optional context.
 
         Args:
@@ -204,7 +206,7 @@ def register(mcp) -> None:
                 you've already seen. Returns the next older page in O(limit)
                 instead of O(page*limit). Overrides `page` when both are set.
         """
-        return whatsapp_list_messages(
+        result = whatsapp_list_messages(
             after=after,
             before=before,
             sender_phone_number=sender_phone_number,
@@ -217,6 +219,11 @@ def register(mcp) -> None:
             context_after=context_after,
             before_timestamp=before_timestamp,
         )
+        if not isinstance(result, str):
+            # whatsapp.list_messages returns [] when the query itself fails
+            # (it logs the exception). Report that instead of an empty result.
+            raise ToolError("list_messages could not query the message store; see the server log")
+        return result
 
     @mcp.tool(annotations=READ_LOCAL)
     def list_chats(
@@ -251,7 +258,14 @@ def register(mcp) -> None:
             chat_jid: The JID of the chat to retrieve
             include_last_message: Whether to include the last message (default True)
         """
-        return whatsapp_get_chat(chat_jid, include_last_message)
+        chat = whatsapp_get_chat(chat_jid, include_last_message)
+        if chat is None:
+            # Not found, or the lookup failed (whatsapp.get_chat logs that).
+            raise ToolError(f"No chat found for {chat_jid}")
+        # A plain dict, matching the declared return type. Annotating the Chat
+        # dataclass instead would publish a schema with bool fields, which the
+        # SQLite 0/1 values in them do not satisfy.
+        return asdict(chat)
 
     @mcp.tool(annotations=READ_LOCAL)
     def get_direct_chat_by_contact(sender_phone_number: str) -> dict[str, Any]:
@@ -260,7 +274,11 @@ def register(mcp) -> None:
         Args:
             sender_phone_number: The phone number to search for
         """
-        return whatsapp_get_direct_chat_by_contact(sender_phone_number)
+        chat = whatsapp_get_direct_chat_by_contact(sender_phone_number)
+        if chat is None:
+            # Not found, or the lookup failed (whatsapp.py logs that).
+            raise ToolError(f"No direct chat found for {sender_phone_number}")
+        return asdict(chat)
 
     @mcp.tool(annotations=READ_LOCAL)
     def get_contact_chats(jid: str, limit: int = 20, page: int = 0) -> list[dict[str, Any]]:
@@ -293,7 +311,7 @@ def register(mcp) -> None:
             before: Messages to include before the target (default 5)
             after: Messages to include after the target (default 5)
         """
-        return whatsapp_get_message_context(message_id, before, after)
+        return asdict(whatsapp_get_message_context(message_id, before, after))
 
     @mcp.tool(annotations=SEND)
     def send_message(
