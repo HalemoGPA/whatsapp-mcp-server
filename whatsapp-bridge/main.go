@@ -1625,7 +1625,7 @@ func handleMessage(client *whatsmeow.Client, messageStore *MessageStore, msg *ev
 	sender := senderJID.User
 
 	// Get appropriate chat name (pass nil for conversation since we don't have one for regular messages)
-	name := GetChatName(client, messageStore, msg.Info.Chat, chatJID, nil, sender, logger)
+	name := GetChatName(client, messageStore, nil, msg.Info.Chat, chatJID, nil, sender, logger)
 
 	// Update chat in database with the message timestamp (keeps last message time updated)
 	err := messageStore.StoreChat(chatJID, name, msg.Info.Timestamp)
@@ -5116,10 +5116,22 @@ func main() {
 }
 
 // GetChatName determines the appropriate name for a chat based on JID and other info
-func GetChatName(client *whatsmeow.Client, messageStore *MessageStore, jid types.JID, chatJID string, conversation interface{}, sender string, logger waLog.Logger) string {
+//
+// tx is the caller's open transaction, or nil. The pool is capped at
+// SetMaxOpenConns(1), so querying messageStore.db while the caller holds a
+// transaction deadlocks: the tx owns the only connection and database/sql
+// waits for a free one with no timeout (busy_timeout does not apply - this is
+// pool starvation, not SQLite lock contention). Callers inside a tx must pass it.
+func GetChatName(client *whatsmeow.Client, messageStore *MessageStore, tx *sql.Tx, jid types.JID, chatJID string, conversation interface{}, sender string, logger waLog.Logger) string {
 	// First, check if chat already exists in database with a name
 	var existingName string
-	err := messageStore.db.QueryRow("SELECT name FROM chats WHERE jid = ?", chatJID).Scan(&existingName)
+	var row *sql.Row
+	if tx != nil {
+		row = tx.QueryRow("SELECT name FROM chats WHERE jid = ?", chatJID)
+	} else {
+		row = messageStore.db.QueryRow("SELECT name FROM chats WHERE jid = ?", chatJID)
+	}
+	err := row.Scan(&existingName)
 	if err == nil && existingName != "" {
 		// Chat exists with a name, use that. The previous "Using existing chat
 		// name for X: Y" Infof fired on every single message - dominated log
@@ -5414,7 +5426,7 @@ func handleHistorySync(client *whatsmeow.Client, messageStore *MessageStore, his
 		jid = resolveToPN(client, jid)
 		chatJID = jid.String()
 
-		name := GetChatName(client, messageStore, jid, chatJID, conversation, "", logger)
+		name := GetChatName(client, messageStore, tx, jid, chatJID, conversation, "", logger)
 
 		messages := conversation.Messages
 		if len(messages) == 0 {
