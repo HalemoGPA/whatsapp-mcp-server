@@ -9,7 +9,7 @@ dependencies = [
     # `[standard]` pulls in uvloop + httptools + websockets - real perf wins
     # on Linux/x86 over the pure-Python defaults; uvicorn picks them up
     # automatically when present.
-    "uvicorn[standard]>=0.52.1",
+    "uvicorn[standard]>=0.52.4",
     # Bridge and provider calls all go through requests.Session (keep-alive).
     # httpx arrives transitively via fastmcp but nothing here imports it, so it
     # is deliberately NOT declared - an undeclared import is a bug, and a
