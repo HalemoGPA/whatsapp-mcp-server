@@ -35,7 +35,7 @@ Corollaries that have each cost real time:
 ## Before you open a PR
 
 ```bash
-pytest                                          # 95 offline tests
+uv run --locked --project whatsapp-mcp-server pytest   # offline suite
 ruff check .
 cd whatsapp-bridge && go vet -tags sqlite_fts5 ./...
 ```

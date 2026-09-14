@@ -288,7 +288,7 @@ retrieval layer cannot be used to reach a tool the token's scope forbids.
 ## Testing
 
 ```bash
-pytest                    # 95 offline tests. No WhatsApp, no bridge, no network.
+uv run --locked --project whatsapp-mcp-server pytest   # offline suite. No WhatsApp, no bridge, no network.
 ruff check .
 cd whatsapp-bridge && go vet -tags sqlite_fts5 ./...
 ```
