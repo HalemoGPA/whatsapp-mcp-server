@@ -5,7 +5,7 @@ description = "Private, authenticated WhatsApp MCP server (HTTP transport)"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "fastmcp>=4.0.3",
+    "fastmcp>=4.0.5",
     # `[standard]` pulls in uvloop + httptools + websockets - real perf wins
     # on Linux/x86 over the pure-Python defaults; uvicorn picks them up
     # automatically when present.
@@ -25,7 +25,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pytest>=9.1.1",
-    "ruff>=0.16.6",
+    "ruff>=0.16.8",
 ]
 
 # Tool config (pytest, ruff) lives in the repo-root pyproject.toml, because the
