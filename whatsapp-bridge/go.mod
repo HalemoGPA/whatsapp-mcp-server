@@ -1,11 +1,11 @@
 module whatsapp-client
 
-go 1.25.0
+go 1.26.0
 
 require (
 	github.com/mattn/go-sqlite3 v1.14.52
 	github.com/mdp/qrterminal v1.0.1
-	github.com/prometheus/client_golang v1.24.1
+	github.com/prometheus/client_golang v1.25.0
 	go.mau.fi/whatsmeow v0.0.0-20260622185415-5f04eac6dbbb
 	google.golang.org/protobuf v1.36.12
 	rsc.io/qr v0.2.0
@@ -23,17 +23,17 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/petermattis/goid v0.0.0-20260330135022-df67b199bc81 // indirect
-	github.com/prometheus/client_model v0.6.2 // indirect
-	github.com/prometheus/common v0.70.1 // indirect
-	github.com/prometheus/procfs v0.21.1 // indirect
+	github.com/prometheus/client_model v0.6.3 // indirect
+	github.com/prometheus/common v0.72.0 // indirect
+	github.com/prometheus/procfs v0.22.0 // indirect
 	github.com/rs/zerolog v1.35.1 // indirect
 	github.com/vektah/gqlparser/v2 v2.5.27 // indirect
 	go.mau.fi/libsignal v0.2.2 // indirect
 	go.mau.fi/util v0.9.10 // indirect
-	golang.org/x/crypto v0.54.0 // indirect
+	golang.org/x/crypto v0.57.0 // indirect
 	golang.org/x/exp v0.0.0-20260611194520-c48552f49976 // indirect
-	golang.org/x/net v0.57.0 // indirect
-	golang.org/x/sync v0.22.0 // indirect
-	golang.org/x/sys v0.47.0 // indirect
-	golang.org/x/text v0.40.0 // indirect
+	golang.org/x/net v0.59.0 // indirect
+	golang.org/x/sync v0.23.0 // indirect
+	golang.org/x/sys v0.48.0 // indirect
+	golang.org/x/text v0.42.0 // indirect
 )
