@@ -117,8 +117,15 @@ images (other unrelated images).
 
 - **`405 client outdated` in bridge logs.** whatsmeow rot, and the single most
   likely future breakage. `cd whatsapp-bridge && go get go.mau.fi/whatsmeow@latest
-  && go get go.mau.fi/util@latest && go mod tidy`, commit, rebuild the bridge,
-  re-pair if needed.
+  && go get go.mau.fi/util@latest && go mod tidy`, commit, rebuild the bridge.
+  A bump can also raise the Go version upstream requires (update `go.mod` and
+  the Dockerfile build stage together) and change call signatures, so run
+  `go vet -tags sqlite_fts5 ./...` before rebuilding.
+  **A 405 is not a logout.** While it lasts the bridge restarts in a loop and
+  reports itself as not logged in, but the stored session is intact. Update and
+  rebuild before you re-pair: on the last bump the bridge reconnected with no QR
+  and WhatsApp delivered the messages queued during the outage. Re-pair only if
+  the updated bridge still shows a QR.
 - **Tool calls hang or truncate behind a CDN.** A CDN may buffer the streaming
   `/mcp` response. Confirm nginx has `proxy_buffering off` (it does in the
   shipped vhost). The tell is `tools/list` working while calls hang. If it
