@@ -9,6 +9,10 @@ Four suites, split by what they need to run.
 | `toolsearch-eval/` | The full tool library loaded | No |
 | `voice-harness/` | Real audio and a transcription key | No |
 
+`ci-docker.sh` is not a suite: it runs the CI jobs themselves (Go, Python and the
+secret scan, as in `.github/workflows/ci.yml`) in throwaway Docker containers, so
+you can see what CI would say with nothing but Docker installed.
+
 ## `unit/` - the offline suite
 
 ```bash

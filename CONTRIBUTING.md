@@ -42,6 +42,10 @@ cd whatsapp-bridge && go vet -tags sqlite_fts5 ./...
 
 CI runs exactly these plus a secret scan. All three must pass.
 
+To run the full CI (including staticcheck, the build and the secret scan) the way
+GitHub does, with only Docker installed, run `tests/ci-docker.sh`. It copies the
+checkout into throwaway containers and never modifies your tree.
+
 `ruff format` is deliberately **not** enforced. Several modules use hand-aligned
 constant blocks the formatter would flatten. Match the surrounding style instead.
 
