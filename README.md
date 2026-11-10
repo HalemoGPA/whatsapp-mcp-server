@@ -3,7 +3,7 @@
 [![CI](https://github.com/HalemoGPA/whatsapp-mcp-server/actions/workflows/ci.yml/badge.svg)](https://github.com/HalemoGPA/whatsapp-mcp-server/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](whatsapp-mcp-server/pyproject.toml)
-[![Go 1.25](https://img.shields.io/badge/go-1.25-00ADD8.svg)](whatsapp-bridge/go.mod)
+[![Go 1.26](https://img.shields.io/badge/go-1.26-00ADD8.svg)](whatsapp-bridge/go.mod)
 
 A self-hosted, authenticated **MCP server for WhatsApp**: 96 tools over your own
 message history, with server-side tool retrieval so the model pays for 29 of them

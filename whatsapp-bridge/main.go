@@ -2417,6 +2417,24 @@ func (tb *tokenBucket) allow() bool {
 	}
 }
 
+// blockedJIDStrings flattens a whatsmeow blocklist into the JID strings that
+// /api/blocklist has always returned. Newer whatsmeow versions put the server's
+// `jid` attribute in the item's LID field (a hidden @lid user on LID-addressed
+// accounts) and the phone JID, when the server sends one, in PN. Prefer the
+// phone JID so callers keep getting the phone-based JIDs they got before, and
+// fall back to the listed JID so no blocked entry is ever dropped.
+func blockedJIDStrings(items []types.BlocklistItem) []string {
+	jids := make([]string, 0, len(items))
+	for _, item := range items {
+		if !item.PN.IsEmpty() {
+			jids = append(jids, item.PN.String())
+		} else {
+			jids = append(jids, item.LID.String())
+		}
+	}
+	return jids
+}
+
 // Start a REST API server to expose the WhatsApp client functionality
 func startRESTServer(client *whatsmeow.Client, messageStore *MessageStore, port int) {
 	mux := http.NewServeMux()
@@ -3167,16 +3185,14 @@ func startRESTServer(client *whatsmeow.Client, messageStore *MessageStore, port 
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
 		}
-		bl, err := client.GetBlocklist(r.Context())
+		// An empty dhash always asks for the full list. A non-empty one that
+		// matches the server's would make whatsmeow return no list at all.
+		bl, err := client.GetBlocklist(r.Context(), "")
 		if err != nil {
 			writeJSON(w, http.StatusInternalServerError, GenericResponse{Success: false, Message: err.Error()})
 			return
 		}
-		jids := make([]string, 0, len(bl.JIDs))
-		for _, j := range bl.JIDs {
-			jids = append(jids, j.String())
-		}
-		writeJSON(w, http.StatusOK, map[string]any{"success": true, "blocked_jids": jids})
+		writeJSON(w, http.StatusOK, map[string]any{"success": true, "blocked_jids": blockedJIDStrings(bl.Items)})
 	})
 
 	// POST /api/block - block a contact.
@@ -3194,7 +3210,7 @@ func startRESTServer(client *whatsmeow.Client, messageStore *MessageStore, port 
 			http.Error(w, fmt.Sprintf("bad jid: %v", err), http.StatusBadRequest)
 			return
 		}
-		if _, err := client.UpdateBlocklist(r.Context(), jid, events.BlocklistChangeActionBlock); err != nil {
+		if _, err := client.UpdateBlocklist(r.Context(), jid, events.BlocklistChangeActionBlock, ""); err != nil {
 			writeJSON(w, http.StatusInternalServerError, GenericResponse{Success: false, Message: err.Error()})
 			return
 		}
@@ -3216,7 +3232,7 @@ func startRESTServer(client *whatsmeow.Client, messageStore *MessageStore, port 
 			http.Error(w, fmt.Sprintf("bad jid: %v", err), http.StatusBadRequest)
 			return
 		}
-		if _, err := client.UpdateBlocklist(r.Context(), jid, events.BlocklistChangeActionUnblock); err != nil {
+		if _, err := client.UpdateBlocklist(r.Context(), jid, events.BlocklistChangeActionUnblock, ""); err != nil {
 			writeJSON(w, http.StatusInternalServerError, GenericResponse{Success: false, Message: err.Error()})
 			return
 		}
@@ -3548,7 +3564,7 @@ func startRESTServer(client *whatsmeow.Client, messageStore *MessageStore, port 
 		if !parsePOSTJSON(w, r, &req) {
 			return
 		}
-		if err := client.SetStatusMessage(r.Context(), req.Message); err != nil {
+		if err := client.SetStatusMessage(r.Context(), types.SetStatusInput{Text: &req.Message}); err != nil {
 			writeJSON(w, http.StatusInternalServerError, GenericResponse{Success: false, Message: err.Error()})
 			return
 		}
